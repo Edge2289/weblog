@@ -90,7 +90,7 @@ return [
 		],
 	],
 
-	'qqconnect' => [
+	'qq' => [
         'appid' => '101571601',
         'appkey' => '65beee4cad70abfc9fb337123fe28f7a',
         'callback' => 'http://blog.uikiss.cn/index/qq/callback',
