@@ -1,0 +1,176 @@
+{include file="public/top"}
+<link rel="stylesheet" href="__STATIC__/color/colpick.css">
+<script src="__STATIC__/color/jquery.min.js"></script>
+<script src="__STATIC__/color/colpick.js"></script>
+    <body>
+        <div class="layui-fluid">
+            <div class="layui-row">
+                <form class="layui-form">
+                <!-- 标题 -->
+                  <div class="layui-form-item">
+                      <label for="banner_title" class="layui-form-label">
+                          <span class="x-red">*</span>banner标题
+                      </label>
+                      <div class="layui-input-inline">
+                        <input type="hidden" name="banner_id" value="{$data['banner_id']}">
+                          <input type="text" id="banner_title" name="banner_title" required="" lay-verify="required" value="{$data['banner_title']}" autocomplete="off" class="layui-input">
+                      </div>
+                  </div>
+                <!-- 作者昵称 -->
+                  <div class="layui-form-item">
+                      <label for="article_nick" class="layui-form-label">
+                          指向地址
+                      </label>
+                      <div class="layui-input-inline">
+                          <input type="text" id="banner_url" name="banner_url" value="{$data['banner_url']}"
+                          autocomplete="off" class="layui-input">
+                      </div>
+                  </div>
+                <!-- color -->
+                  <div class="layui-form-item">
+                      <label for="article_nick" class="layui-form-label">
+                          背景颜色
+                      </label>
+                      <div class="layui-input-inline">
+                          <input type="text" id="color" name="color" 
+                          autocomplete="off" class="layui-input" style="cursor: pointer; background-color: #{$data['banner_title']}">
+                           <input type="hidden" id="colorhidden" name="colorhidden"
+                          autocomplete="off" class="layui-input" value="{$data['banner_title']}">
+                      </div>
+                  </div>
+                <!-- 配图 -->
+                  <div class="layui-form-item">
+                      <label for="banner_img" class="layui-form-label">
+                         <span class="x-red">*</span> <span class="x-red"></span>图片
+                      </label>
+                      <div class="layui-input-inline" style="width: 500px;">
+                          <input type="hidden" name="banner_img" value="{$data['banner_img']}">
+                          <img src="{$data['banner_img']}" id="imgshow" width="50px" />
+                          <button type="button" class="layui-btn" id="img" required="" >
+                            <i class="layui-icon">&#xe67c;</i>上传图片
+                          </button>
+                          <span style="color: #7d7d7d;"> 若不上传配图则使用系统默认配图 尺寸 1200 * 842</span>
+                      </div>
+                  </div>
+                <!-- 状态 -->
+                  <div class="layui-form-item">
+                    <label class="layui-form-label">状态</label>
+                    <div class="layui-input-block">
+                      <input type="checkbox" name="is_state" lay-skin="switch" {if condition="$data['is_state'] == 1"}checked=""{/if} lay-text="ON|OFF">
+                    </div>
+                  </div>
+                  
+                <!-- 增加 -->
+                  <div class="layui-form-item">
+                      <label for="L_repass" class="layui-form-label">
+                      </label>
+                      <button  class="layui-btn" lay-filter="add" lay-submit="">
+                          修改
+                      </button>
+                  </div>
+              </form>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            $(function(){
+              $('#color').colpick({
+                  colorScheme:'dark',
+                  layout:'rgbhex',
+                  color:'ff8800',
+                  onSubmit:function(hsb,hex,rgb,el) {
+                    $(el).css('background-color', '#'+hex);
+                    $("#colorhidden").val(hex);
+                    $(el).colpickHide();
+
+                  }
+
+                })
+            })
+        </script>
+
+
+        <script>
+        layui.use(['form', 'layer', 'upload'],
+            function() {
+                $ = layui.jquery;
+                var form = layui.form,
+                layer = layui.layer,
+                upload = layui.upload;
+
+                // 自定义图片上传
+                uploadInst = upload.render({
+                  elem : '#img' // 元素绑定
+                  ,url : '{:Url("upload/bannerimg")}'
+                  ,accept : 'images'
+                  ,acceptMime  : 'image/*'
+                  ,size : '3000'
+                  ,before : function(obj){ 
+                    // 上传前回调
+                    layer.load(); //上传loading
+
+                  }
+                  /**
+                   * [done description]
+                   * @param  {[type]}   res [
+                   *   "code": 0
+                        ,"msg": ""
+                        ,"data": {
+                         "src": "http://cdn.layui.com/123.jpg"
+                        }]
+                   * @return {Function}     [description]
+                   */
+                  ,done:function(res){
+                    // 上传完毕回调
+                    if (res.code) {
+                      $("input[name='banner_img']").val(res.data.src);
+                      $("#imgshow").attr("src", res.data.src);
+                    }
+                    layer.closeAll('loading'); // 关闭loding
+                  }
+                  ,error: function(){
+                    // 请求异常回调
+                    layer.closeAll('loading'); // 关闭loding
+                  }
+                })
+
+
+                //监听提交
+                form.on('submit(add)',function(data) {
+                  if (data.field.banner_img == '') {
+                    layer.msg('请上传图片');
+                    return false;
+                  }
+                    $.ajax({
+                      'type' : 'post',
+                      'url' : '{:Url("banner/banneredit")}',
+                      'data' : {'data' : data.field},
+                      dataType : 'json',
+                      success:function(data){
+                        var data = JSON.parse(data);
+                        if (data.code == 0) {
+                            layer.alert(data.msg, {
+                                icon: 6
+                            },function() {
+                                //关闭当前frame
+                                x_admin_close();
+                                // 可以对父窗口进行刷新 
+                                x_admin_father_reload();
+                              });
+                        }else{
+                          layer.msg(data.msg);
+                        }
+                      },
+                      error:function(){
+                        layer.msg("请重新尝试");
+                      }
+
+                    })
+                    //发异步，把数据提交给php
+                    return false;
+                });
+
+            });</script>
+    </body>
+
+</html>

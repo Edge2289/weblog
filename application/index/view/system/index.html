@@ -1,0 +1,62 @@
+{include file="public/top"}
+    <body>
+        <div class="x-nav">
+            <span class="layui-breadcrumb">
+                <a href="">首页</a>
+                <a href="">系统管理</a>
+                <a>
+                    <cite>参数管理</cite></a>
+            </span>
+            <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" onclick="location.reload()" title="刷新">
+                <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i>
+            </a>
+        </div>
+        <div class="layui-fluid">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-body ">
+                            <blockquote class="layui-elem-quote">参数管理</blockquote>
+                        </div>
+                        <div class="layui-card-body ">
+                            <table class="layui-table layui-form">
+                              <thead>
+                                <tr>
+                                  <th width="70">名称</th>
+                                  <th width="70">变量名</th>
+                                  <th width="70">变量值</th>
+                              </thead>
+                              <tbody class="x-cate">
+                                {volist name="sysData" id="data"}
+                                  <tr>
+                                    <td>
+                                      {$data['title']}
+                                      </td>
+                                    <td>
+                                      {$data['name']}
+                                    </td>
+                                    <td><input type="text" class="layui-input x-sort" onchange="changevalue(this,'{$data[\"name\"]}')" value="{$data['value']}"></td>
+                                  </tr>
+                                {/volist}
+                              </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+          function changevalue(obj, name){
+            var value = $(obj).val();
+            if (value == '') {
+              layer.msg('不可以为空');
+              return false;
+            }
+            $.post('{:Url("system/index")}',{'value':value,'name':name},function(data){
+                layer.msg("修改成功");
+            })
+          }
+   
+        </script>
+    </body>
+</html>

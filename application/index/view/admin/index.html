@@ -1,0 +1,123 @@
+{include file="public/top"}
+    <body>
+        <div class="x-nav">
+            <span class="layui-breadcrumb">
+                <a href="">首页</a>
+                <a href="">管理员管理</a>
+                <a>
+                    <cite>管理员列表</cite></a>
+            </span>
+            <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" onclick="location.reload()" title="刷新">
+                <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i>
+            </a>
+        </div>
+        <div class="layui-fluid">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md12">
+                    <div class="layui-card">
+
+                        <div class="layui-card-body ">
+                            <table class="layui-table" id="demo" lay-filter="demo"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script type="text/html" id="toolbarDemo">
+      <div class="layui-btn-container">
+        <!-- <button class="layui-btn layui-btn-sm" lay-event="insert">添加banner</button> -->
+      </div>
+    </script>
+    <script type="text/html" id="barDemo">
+      <a class="layui-btn layui-btn-normal" lay-event="edit">编辑</a>
+      <a class="layui-btn layui-btn-danger" lay-event="del">删除</a>
+    </script>
+    <script>layui.use('laydate',
+        function() {
+            var laydate = layui.laydate;
+
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#start' //指定元素
+            });
+
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#end' //指定元素
+            });
+
+        });</script>
+
+    <script>
+    layui.use('table',
+        function() {
+            var table = layui.table;
+
+            ///第一个实例
+              table.render({
+                elem: '#demo'
+                ,url: '/api/admin/adminlist/' //数据接口
+                ,toolbar: '#toolbarDemo'
+                ,page: false //开启分页
+                ,cols: [[ //表头
+                  {field: 'admin_id', title: 'ID', width:80,fixed: 'left'}
+                  ,{field: 'admin_name', title: '用户名', width: 260}
+                  ,{field: 'admin_nick', title: '管理员昵称', width: 260,}
+                  ,{field: 'loginsum', title: '登录次数', width: 200, sort: true}
+                  ,{field: 'is_state', title: '状态', width: 200, templet:function(e){
+                      var state = e.is_state == 1 ? '开启' : '关闭';
+                      return state;
+                  }}
+                  ,{field: 'wealth', title: '操作', toolbar: '#barDemo',fixed: 'right'}
+                ]]
+                ,id: 'listreload'
+              });
+
+
+            //监听工具条
+                table.on('tool(demo)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+                  var data = obj.data; //获得当前行数据
+                  var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+                  var tr = obj.tr; //获得当前行 tr 的DOM对象
+                 
+                  // if(layEvent === 'del'){ //删除
+                  //   layer.confirm('真的删除行么', function(index){
+                  //       $.ajax({
+                  //         'type' : 'post',
+                  //         'url' : '{:Url("banner/bannerdel")}',
+                  //         'data' : {'id' : data.banner_id},
+                  //         dataType : 'json',
+                  //         success:function(data){
+                  //           var data = JSON.parse(data);
+                  //             layer.msg(data.msg);
+                  //         },
+                  //         error:function(){
+                  //           layer.msg("请重新尝试");
+                  //         }
+
+                  //       })
+                  //     layer.close(index);
+                  //     obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                  //     //向服务端发送删除指令
+                  //   });
+                  // } else if(layEvent === 'edit'){ //编辑
+                  //   //do something
+                  //    xadmin.open('修改文章','{:Url("banner/banneredit")}?banner_id='+data.banner_id,800,600);
+                  // }
+                });
+
+               //头工具栏事件
+          table.on('toolbar(demo)', function(obj){
+            // var checkStatus = table.checkStatus(obj.config.id);
+            switch(obj.event){
+              case 'insert':
+                // var data = checkStatus.data;
+                xadmin.open('添加文章','{:Url("banner/banneradd")}',800,600);
+              break;
+            };
+          });
+
+        });</script>
+
+</html>

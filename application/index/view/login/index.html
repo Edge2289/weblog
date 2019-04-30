@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<!-- saved from url=(0032)http://47.105.160.188:8080/login -->
+<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>{$title}</title>
+    
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+    <link rel="stylesheet" href="__LOGIN__/main.874f6aa6952b6c3c757c.css">
+    <style type="text/css">
+    html,body{
+        width: 100%;
+        height: 100%;
+        background: #f0f0f0;
+        overflow: hidden;
+    }
+    .app-main{
+        width: 100%;
+        height: 100%;
+    }
+    </style><style type="text/css">
+    .login {
+      width: 100%;
+      height: 100%;
+      background-image: url(__LOGIN__/c2a57202c856f8b4b12a79029911f8e2.jpg);
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    .login-con {
+      position: absolute;
+      right: 160px;
+      top: 50%;
+      transform: translateY(-60%);
+      width: 300px;
+    }
+    .login-con-header {
+      font-size: 16px;
+      font-weight: 300;
+      text-align: center;
+      padding: 30px 0;
+    }
+    .login-con .form-con {
+      padding: 10px 0 0;
+    }
+    .login-con .login-tip {
+      font-size: 10px;
+      text-align: center;
+      color: #c3c3c3;
+    }
+    </style>
+</head>
+
+<body>
+    <div id="main" class="app-main">
+    <div class="login">
+    <div class="login-con">
+    <div class="ivu-card">
+    <div class="ivu-card-head">
+    <p>
+    <i class="ivu-icon ivu-icon-log-in"></i>欢迎登录</p></div>
+     <!----> 
+     <div class="ivu-card-body"> 
+     <div class="form-con">
+              <form autocomplete="off" action="" method="post" class="ivu-form ivu-form-label-right">
+                <div class="ivu-form-item ivu-form-item-required"><!----> 
+                <div class="ivu-form-item-content">
+                <div class="ivu-input-wrapper ivu-input-type ivu-input-group ivu-input-group-with-prepend">
+                <div class="ivu-input-group-prepend" style="">
+                <span><i class="ivu-icon ivu-icon-person" style="font-size: 16px;"></i></span>
+                </div> <!----> 
+                <i class="ivu-icon ivu-icon-load-c ivu-load-loop ivu-input-icon ivu-input-icon-validate"></i>
+                <input autocomplete="off" spellcheck="false" type="text" placeholder="请输入用户名" name="username" class="ivu-input"> <!----></div> 
+                <!----></div></div> <div class="ivu-form-item ivu-form-item-required"><!----> <div class="ivu-form-item-content"><div class="ivu-input-wrapper ivu-input-type ivu-input-group ivu-input-group-with-prepend"><div class="ivu-input-group-prepend" style=""><span><i class="ivu-icon ivu-icon-locked" style="font-size: 14px;"></i></span></div> <!----> <i class="ivu-icon ivu-icon-load-c ivu-load-loop ivu-input-icon ivu-input-icon-validate"></i> <input autocomplete="off" spellcheck="false" type="password" name="password" placeholder="请输入密码" class="ivu-input"> <!----></div> <!----></div></div> <div class="ivu-form-item"><!----> <div class="ivu-form-item-content">
+                <button type="button" id="submit" class="ivu-btn ivu-btn-primary ivu-btn-long"> <span>登录</span></button> <!----></div></div>
+                </form> 
+                <p class="login-tip"></p>
+
+                </div></div></div></div></div></div>
+    <div class="lock-screen-back" id="lock_screen_back"></div>
+    <div class="ivu-loading-bar" style="height: 2px; display: none;"><div class="ivu-loading-bar-inner ivu-loading-bar-inner-color-primary" style="width: 0%; height: 2px;"></div></div>
+
+
+<div class="ivu-notice" style="top: 24px; right: 0px;">
+
+</div>
+<div class="ivu-message" style="top: 24px;"></div>
+    <script src="__LOGIN__/jquery.js"></script>
+<script>
+  $(function(){
+    $("#submit").click(function(){
+      var username = $("input[name='username']").val();
+      var password = $("input[name='password']").val();
+
+      if (username == '' || password =='') {
+        alert("请填写完整信息");
+        return false;
+      }
+
+      $.ajax({
+          'type' : 'post',
+          'url' : "{:Url('login/isSubmit')}",
+          'data' : {'username':username,'password':password},
+          'dataType' : 'json',
+          success:function(data){
+            var data = JSON.parse(data);
+            if (data.code == -1) {
+              alert(data.msg);
+            }else{
+              window.location.href = '{:Url("index/index")}';
+            }
+          },
+          error:function(data){
+
+          }
+      })
+    })
+  })
+</script>
+</body>
+</html>
