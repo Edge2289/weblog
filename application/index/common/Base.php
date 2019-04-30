@@ -24,8 +24,8 @@ class Base extends Controller
 	}
 
 	public function isLogin(){
-
-		if (empty(Session('adminData.admin_id'))) {
+		$adminData = Session('adminData.admin_id'));
+		if (empty($adminData) {
 			return $this->redirect('login/index');
 		}
 		$this->adminId = Session('adminData.admin_id');
