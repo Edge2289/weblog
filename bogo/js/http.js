@@ -1,5 +1,5 @@
 $(function(){
-	const sUrl = 'http://www.kissby.com/';
+	const sUrl = 'http://www.uikiss.com/';
 	var domain = GetQueryString("bolg");
 	var arti = GetQueryString("arti");
 	$.get(sUrl+'api/index/cateData',function(data){
