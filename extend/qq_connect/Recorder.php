@@ -21,7 +21,6 @@ class Recorder{
 
         $incFileContents = '{"appid":"'.config('qq.appid').'","appkey":"'.config('qq.appkey').'","callback":"'.config('qq.callback').'","scope":"'.config('qq.scope').'","errorReport":'.config('qq.errorReport').',"storageType":"'.config('qq.storageType').'","host":"'.config('qq.host').'","user":"'.config('qq.user').'","password":"'.config('qq.password').'","database":"'.config('qq.database').'"}';
         $this->inc = json_decode($incFileContents);
-dd($this->inc);
         if(empty($this->inc)){
             $this->error->showError("20001");
         }
