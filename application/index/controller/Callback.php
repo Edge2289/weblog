@@ -34,7 +34,7 @@ class Callback extends Controller
          *  -3 没有注册 + 登录
          */
         
-        $token = md5(md5($findId).time());  // 设置登录token
+        $token = md5(md5($openid).time());  // 设置登录token
         $findId = Db('blog_user')->where('user_qq',$openid)->select();
         if ($findId) {
             // 登录
