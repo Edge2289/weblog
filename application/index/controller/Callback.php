@@ -1,7 +1,9 @@
 <?php
 namespace app\index\controller;
 
+use think\Db;
 use think\Controller;
+
 class Callback extends Controller
 {
     //访问QQ登录页面
@@ -25,7 +27,38 @@ class Callback extends Controller
         //根据accesstoken和open_id获取用户的基本信息
         $qc = new \qq_connect\QC($accesstoken,$openid);
         $userinfo = $qc->get_user_info();
-        var_dump($userinfo);
+        
+        /**
+         *  1 先判断id是否登记过
+         *  -1 有id直接登录
+         *  -3 没有注册 + 登录
+         */
+        
+        $token = md5(md5($findId).time());  // 设置登录token
+        $findId = Db('blog_user')->where('user_qq',$openid)->select();
+        if ($findId) {
+            // 登录
+            Db('blog_user')->where('user_qq',$openid)->update([
+                    'access_token' => $token
+                ]);
+            
+        }else{
+                // 注册
+                $map['user_qq'] = $openid;
+                $map['user_nick'] = $userinfo["nickname"];
+                $map['user_img'] = $userinfo["figureurl_2"];
+                $map['access_token'] = $token;
+                $map['is_status'] = 1;
+                $map['register_time'] = time();
+                $map['is_comment'] = 1;
+            }
+        $this->redirect('http://blog.uikiss.cn',[
+                'user_qq'=>$openid,
+                'user_nick'=>$userinfo["nickname"],
+                'user_img'=>$userinfo["figureurl_2"],
+                'access_token'=>$token,
+                'is_comment'=>empty($findId) ? 1 : $findId['is_comment'],
+                ]);
     }
  
  

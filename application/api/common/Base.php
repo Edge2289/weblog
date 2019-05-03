@@ -12,8 +12,8 @@ class Base extends Controller
 	protected $request = '';
 		
 	public function __construct(){
-		
-		if (empty(Session('adminData'))) {
+		$adminData = Session('adminData');
+		if (empty($adminData)) {
 			dd(['code'=>0, 'msg' => '暫無參數' , 'data' => []]);
 		}
 		$this->request = Request::instance();

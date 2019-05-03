@@ -21,6 +21,16 @@ class Index extends Base
 	    header('Access-Control-Allow-Headers: Content-Type,Content-Length,Accept-Encoding,X-Requested-with, Origin'); // 设置允许自定义请求头的字段
 	}
 
+
+	/**
+	 * [is_login 验证登录]
+	 * @return boolean [description]
+	 */
+	public function is_login(){
+
+		$param = $this->request->param();
+	}
+
 	/**
 	 * [cateData 获取分类]
 	 * @return [type] [description]
