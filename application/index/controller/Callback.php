@@ -54,7 +54,12 @@ class Callback extends Controller
             }
             $is_comment = empty($findId) ? 1 : $findId['is_comment'];
             // 重定向回去前端
-        $this->redirect('http://blog.uikiss.cn?user_qq={$openid}&user_nick={$userinfo["nickname"]}&user_img={$userinfo["figureurl_2"]}&access_token={$token}&is_comment={$is_comment}');
+            $mdp = 'user_qq='.$openid.'&user_nick='.$userinfo["nickname"].'&user_img='.$userinfo["figureurl_2"].'&access_token='.$token.'&is_comment='.$is_comment;
+        $this->redirect('http://blog.uikiss.cn?time='.base64_encode($mdp));
     }
- 
+
+    public function __empty(){
+        $this->redirect("http://baidu.com");
+    }
+
 }
