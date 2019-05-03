@@ -52,15 +52,9 @@ class Callback extends Controller
                 $map['register_time'] = time();
                 $map['is_comment'] = 1;
             }
-        $this->redirect('http://blog.uikiss.cn',[
-                'user_qq'=>$openid,
-                'user_nick'=>$userinfo["nickname"],
-                'user_img'=>$userinfo["figureurl_2"],
-                'access_token'=>$token,
-                'is_comment'=>empty($findId) ? 1 : $findId['is_comment'],
-                ]);
+            $is_comment = empty($findId) ? 1 : $findId['is_comment'];
+            // 重定向回去前端
+        $this->redirect('http://blog.uikiss.cn?user_qq={$openid}&user_nick={$userinfo["nickname"]}&user_img={$userinfo["figureurl_2"]}&access_token={$token}&is_comment={$is_comment}');
     }
- 
- 
  
 }
