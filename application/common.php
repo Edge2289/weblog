@@ -32,3 +32,80 @@ function pwmd5($pass , $halt = "xiaoxiaoHalt"){
 
 	return md5(md5($pass).$halt);
 }
+
+/**
+ * 用递归获取子类信息
+ * $tree 所有分类
+ * $rootId 父级id
+ * $result 分好类的数组
+*/
+
+function commentTree($tree, $rootId = 0) { 
+
+  $return = array(); 
+  foreach($tree as $leaf) { 
+    if($leaf['target_id'] == $rootId) { 
+      foreach($tree as $subleaf) { 
+        if($subleaf['target_id'] == $leaf['comment_id']) { 
+          $leaf['children'] = commentTree($tree, $leaf['comment_id']); 
+          break; 
+        } 
+      } 
+      $return[] = $leaf; 
+    } 
+  } 
+  return $return; 
+} 
+
+/**
+ *  遍历树形做回二维数组
+ */
+function commentBig($tree){
+
+	$return = array(); 
+	  foreach($tree as $k1 => $leaf) { 
+	    if($leaf['target_id'] == 0) { 
+	    	unset($tree[$k1]);
+	    	// unset($leaf['children']);
+	    	$return[$leaf['comment_id']] = $leaf;
+	    } 
+	  }
+
+	  foreach ($return as $key => $value) {
+	  	if (!empty($value['children'])) {
+	  		$comment_data_time = commentShow($value['children']);
+	  		$return[$key]['children'] = maopaoTime($comment_data_time);
+	  	}
+	  }
+
+    return $return; 
+}
+
+
+function commentShow($aa){
+    $sb = array();
+    foreach($aa as $v){
+    	$bm = $v;
+    	unset($bm['children']);
+        $sb[] = $bm;
+        if(!empty($v['children'])){
+            $sbb = commentShow($v['children']);
+            $sb = array_merge($sb,$sbb);
+        }
+    }
+    return $sb;
+}
+
+function maopaoTime($data){
+	for ($i=0; $i < count($data); $i++) { 
+		$bm = array();
+		for ($b = $i; $b < count($data)-1; $b++) { 
+			if ($data[$i]['comment_time'] > $data[$b+1]['comment_time']) {
+				$bm = $data[$i];
+				$data[$i] = $data[$b+1];
+				$data[$b+1] = $bm;
+			}
+		}
+	}
+	return $data;
+}

@@ -1,6 +1,7 @@
 <?php
 namespace app\api\controller;
 
+use think\Db;
 use app\common\model\CateModel;
 use app\common\model\ArticleModel;
 use app\api\common\Base;
@@ -50,12 +51,16 @@ class Index extends Base
 
 	public function articleHtml(){
 		$article_id = input('get.arti');
-		$data = ArticleModel::where('article_id',$article_id)
+		$data['html'] = ArticleModel::where('article_id',$article_id)
 					->where('article_is_del',2)
 					->where('article_is_state',1)
 					->field('article_title,article_nick,article_text,read_sum,click_sum,is_comment')
 					->find()
 					->toArray();
+		$comment = Db::query('select a.*,b.user_nick from blog_comment a left join blog_user b on a.user_id = b.user_id where a.article_id = '.$article_id.' order by comment_id desc');
+		$data['comment'] = commentTree($comment) ;
+		// dd($data['comment'][1]['children']);
+		dd(commentBig($data['comment']));
 		return DataReturn(1, '请求成功', $data);
 	}
 

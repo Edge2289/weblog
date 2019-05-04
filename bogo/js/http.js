@@ -1,7 +1,31 @@
 $(function(){
+	// 设置api 地址
 	const sUrl = 'http://www.uikiss.com/';
+
 	var domain = GetQueryString("bolg");
 	var arti = GetQueryString("arti");
+	var time = GetQueryString("time");
+
+	// 实现登录操作
+	if (time) {
+
+		// 定义一个json 接收数据
+		var sendData = []
+
+		// 创建Base64对象
+		var Base64={_keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",encode:function(e){var t="";var n,r,i,s,o,u,a;var f=0;e=Base64._utf8_encode(e);while(f<e.length){n=e.charCodeAt(f++);r=e.charCodeAt(f++);i=e.charCodeAt(f++);s=n>>2;o=(n&3)<<4|r>>4;u=(r&15)<<2|i>>6;a=i&63;if(isNaN(r)){u=a=64}else if(isNaN(i)){a=64}t=t+this._keyStr.charAt(s)+this._keyStr.charAt(o)+this._keyStr.charAt(u)+this._keyStr.charAt(a)}return t},decode:function(e){var t="";var n,r,i;var s,o,u,a;var f=0;e=e.replace(/[^A-Za-z0-9+/=]/g,"");while(f<e.length){s=this._keyStr.indexOf(e.charAt(f++));o=this._keyStr.indexOf(e.charAt(f++));u=this._keyStr.indexOf(e.charAt(f++));a=this._keyStr.indexOf(e.charAt(f++));n=s<<2|o>>4;r=(o&15)<<4|u>>2;i=(u&3)<<6|a;t=t+String.fromCharCode(n);if(u!=64){t=t+String.fromCharCode(r)}if(a!=64){t=t+String.fromCharCode(i)}}t=Base64._utf8_decode(t);return t},_utf8_encode:function(e){e=e.replace(/rn/g,"n");var t="";for(var n=0;n<e.length;n++){var r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r)}else if(r>127&&r<2048){t+=String.fromCharCode(r>>6|192);t+=String.fromCharCode(r&63|128)}else{t+=String.fromCharCode(r>>12|224);t+=String.fromCharCode(r>>6&63|128);t+=String.fromCharCode(r&63|128)}}return t},_utf8_decode:function(e){var t="";var n=0;var r=c1=c2=0;while(n<e.length){r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r);n++}else if(r>191&&r<224){c2=e.charCodeAt(n+1);t+=String.fromCharCode((r&31)<<6|c2&63);n+=2}else{c2=e.charCodeAt(n+1);c3=e.charCodeAt(n+2);t+=String.fromCharCode((r&15)<<12|(c2&63)<<6|c3&63);n+=3}}return t}}
+ 		var kv = {};
+		var result =  Base64.decode(time); 
+		var urlData = result.split('&');
+		for (var i = 0; i < urlData.length; i++) {
+			a = urlData[i].split('=');
+			sendData[a[0]] = a[1];
+			localStorage.setItem(a[0],a[1]);
+		}
+		localStorage.setItem('userData',sendData);
+	}
+
+	// 获取首页分类标签
 	$.get(sUrl+'api/index/cateData',function(data){
 		var data = JSON.parse(data);
 		var html = '';
@@ -35,10 +59,13 @@ $(function(){
 			return  unescape(decodeURI(r[2]));
 		  return null;
 	}
+
 	if(domain){
 		$("#cateName").html(domain);
 		blog(domain);
 	}
+
+
 	// 根据分类获取信息
 	function blog(type){
 		
@@ -62,19 +89,76 @@ $(function(){
 		})
 	}
 	
+
+
 	/**
 	* 文章的显示
+	* 评论的加载
 	*/
 	if(arti){
+		// 	请求属性
 		$.get(sUrl+'api/index/articleHtml',{'arti':arti},function(data){
-				var data = JSON.parse(data);
-			 $("#article_title").html(data.data.article_title);
-			 $("#article_text").html(data.data.article_text);
-			 if(data.data.is_comment == 1){
+			var data = JSON.parse(data);
+			console.log(data);
+			// 文章内容显示
+			 $("#article_title").html(data.data.html.article_title);
+			 $("#article_text").html(data.data.html.article_text);
+			 if(data.data.html.is_comment == 1){
 				$("#is_comment").show();
 			 }
+			 var commentHtml = '';
+			 // 评论的展示
+			 data.data.comment.forEach(function(e){
+
+			 	commentHtml += '<div class="comment-show-con clearfix">';
+				commentHtml += '			<div class="comment-show-con-img pull-left" style="width: 38px;height: 38px;">';
+				commentHtml += '				<img src="images/header-img-comment_03.png" alt="">';
+				commentHtml += '			</div>';
+				commentHtml += '			<div class="comment-show-con-list pull-left clearfix">';
+				commentHtml += '				<div class="pl-text clearfix">';
+				commentHtml += '					<a href="#" class="comment-size-name">'+e.user_nick+' : </a>';
+				commentHtml += '					<span class="my-pl-con">'+e.comment_val+'</span>';
+				commentHtml += '				</div>';
+				commentHtml += '				<div class="date-dz">';
+				commentHtml += '					<span class="date-dz-left pull-left comment-time">2017-5-2 11:11:39</span>';
+				commentHtml += '					<div class="date-dz-right pull-right comment-pl-block">';
+				commentHtml += '						<a href="javascript:;" class="removeBlock">删除</a>';
+				commentHtml += '						<a href="javascript:;" class="date-dz-pl pl-hf hf-con-block pull-left">回复</a>';
+				commentHtml += '						<span class="pull-left date-dz-line">|</span>';
+				commentHtml += '						<a href="javascript:;" class="date-dz-z pull-left"><i class="date-dz-z-click-red"></i>赞 (<i class="z-num">666</i>)</a>';
+				commentHtml += '					</div>';
+				commentHtml += '				</div>';
+						if (e.children) {
+			 						e.children.forEach(function(f){
+										commentHtml += '<div class="hf-list-con">';
+										commentHtml += '	<div class="all-pl-con">';
+										commentHtml += '		<div class="pl-text hfpl-text clearfix">';
+										commentHtml += '			<a href="#" class="comment-size-name">'+f.user_nick+' : </a>';
+										commentHtml += '			<span class="my-pl-con">'+f.comment_val+'</span>';
+										commentHtml += '		</div>';
+										commentHtml += '		<div class="date-dz"> ';
+										commentHtml += '			<span class="date-dz-left pull-left comment-time">2019-10-10</span> ';
+										commentHtml += '			<div class="date-dz-right pull-right comment-pl-block"> ';
+										commentHtml += '				<a href="javascript:;" class="removeBlock">删除</a> ';
+										commentHtml += '				<a href="javascript:;" class="date-dz-pl pl-hf hf-con-block pull-left">回复</a> ';
+										commentHtml += '				<span class="pull-left date-dz-line">|</span> ';
+										commentHtml += '				<a href="javascript:;" class="date-dz-z pull-left">';
+										commentHtml += '				<i class="date-dz-z-click-red"></i>赞 (<i class="z-num">666</i>)</a> ';
+										commentHtml += '			</div> ';
+										commentHtml += '		</div>';
+										commentHtml += '		</div>';
+										commentHtml += '</div>';
+									 })
+						}
+				commentHtml += '			</div>';
+				commentHtml += '		</div> ';
+			 })
+			 $('.comment-show').html(commentHtml);
 		})
+
 	}
+
+
 	/**
 	* 前台获取热门  以及最新的博客
 	*/
@@ -121,11 +205,25 @@ $(function(){
 		})
 	}
 	
+	// 登录后显示问题
+	var loginData = localStorage.getItem('user_nick');
+	if (loginData) {
+		$(".nameimg").attr('src',localStorage.getItem('user_img'));
+		$(".namenick").html(loginData);
+
+		$(".login").hide();
+		$(".logutout").show();
+	}else{
+		$(".login").show();
+		$(".logutout").hide();
+	}
 	
-	
-	
-	
-	
+	// 取消登录
+	$(".logut").click(function(){
+		localStorage.clear();
+		$(".login").show();
+		$(".logutout").hide();
+	})
 	
 	
 	
