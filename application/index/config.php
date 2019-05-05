@@ -26,7 +26,7 @@ return [
 				'commentlist' => [
 					'title' => '评论列表',
 					'icon' => '&#xe6a7;',
-					'url' => '/index/comment/commentList'
+					'url' => '/index/comment/index'
 				],
 			],
 		],
@@ -50,12 +50,7 @@ return [
 				'userlist' => [
 					'title' => '用户列表',
 					'icon' => '&#xe6a7;',
-					'url' => '/index/user/userList'
-				],
-				'navlist' => [
-					'title' => '文章分类',
-					'icon' => '&#xe6a7;',
-					'url' => '/index/article/cate'
+					'url' => '/index/user/userlist'
 				],
 			],
 		],
