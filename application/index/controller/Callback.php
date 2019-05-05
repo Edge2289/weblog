@@ -35,7 +35,7 @@ class Callback extends Controller
          */
         
         $token = md5(md5($openid).time());  // 设置登录token
-        $findId = Db('blog_user')->where('user_qq',$openid)->select();
+        $findId = Db('blog_user')->where('user_qq',$openid)->find();
         if ($findId) {
             // 登录
             Db('blog_user')->where('user_qq',$openid)->update([

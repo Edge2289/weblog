@@ -106,8 +106,8 @@ function getLocalTime(nS) {
 			var data = JSON.parse(data);
 			console.log(data);
 			// 文章内容显示
-			 // $("#article_title").html(data.data.html.article_title);
-			 // $("#article_text").html(data.data.html.article_text);
+			 $("#article_title").html(data.data.html.article_title);
+			 $("#article_text").html(data.data.html.article_text);
 			 $("#article_id").val(data.data.html.article_id);
 			 if(data.data.html.is_comment == 1){
 				$("#is_comment").show();
