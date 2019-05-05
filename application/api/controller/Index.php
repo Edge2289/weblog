@@ -54,13 +54,13 @@ class Index extends Base
 		$data['html'] = ArticleModel::where('article_id',$article_id)
 					->where('article_is_del',2)
 					->where('article_is_state',1)
-					->field('article_title,article_nick,article_text,read_sum,click_sum,is_comment')
+					->field('article_id,article_title,article_nick,article_text,read_sum,click_sum,is_comment')
 					->find()
 					->toArray();
-		$comment = Db::query('select a.*,b.user_nick from blog_comment a left join blog_user b on a.user_id = b.user_id where a.article_id = '.$article_id.' order by comment_id desc');
-		$data['comment'] = commentTree($comment) ;
-		// dd($data['comment'][1]['children']);
-		dd(commentBig($data['comment']));
+		// $comment = Db::query('SELECT a.*,b.user_nick as target_nick,c.user_nick,c.user_img FROM blog_comment a left JOIN blog_user b ON a.target_id = b.user_id left JOIN blog_user c ON a.user_id = c.user_id where a.article_id = '.$article_id.' order by comment_id desc');
+		$comment = Db::query('SELECT a.*,b.user_id AS target_user_id,c.user_nick,c.user_img FROM blog_comment a LEFT JOIN blog_comment b ON a.target_id = b.comment_id left JOIN blog_user c ON a.user_id = c.user_id where a.article_id = '.$article_id.' order by comment_id desc');
+		$data['comment'] = commentTree($comment);
+		$data['comment'] = commentBig($data['comment']);
 		return DataReturn(1, '请求成功', $data);
 	}
 
@@ -82,4 +82,56 @@ class Index extends Base
 									->toArray();
 		return DataReturn(1, '请求成功', $data);
 	}
+
+
+    // 登录是否失效
+    public function isLogin(){
+        $param = Request()->param();
+        $i = Db('blog_user')->where($param)->field('user_id')->find();
+        if ($i) {
+           return DataReturn(1,'有效',[]);
+        }else{
+            return DataReturn(-1, '请重新登录', []);
+        }
+    }
+
+    /**
+     * [commentIns 添加评论]
+     * @return [type] [description]
+     */
+    public function commentIns(){
+    	if (!Request()->isPost()) {
+    		return DataReturn(-1,'错误提交',[]);
+    	}
+    	$param = Request()->param();
+    	if (empty($param['sqq']) || strlen($param['sqq']) != 32) {
+    		return DataReturn(-1,'错误提交',[]);
+    	}
+    	$userI = Db('blog_user')->where('user_qq',$param['sqq'])->value('user_id');
+    	if (!$userI) {
+    		return DataReturn(-1,'请重新登录',[]);
+    	}
+    	$map['target_id'] = 0;
+    	if (!empty($param['tid'])) {
+    		$map['target_id'] = $param['tid'];
+    	}
+    	$map['comment_val'] = $param['oSize'];
+    	$map['user_id'] = $userI;
+    	$map['article_id'] = $param['aid'];
+    	$map['comment_time'] = time();
+    	$it = Db('blog_comment')->insert($map);
+    	if ($it) {
+    		return DataReturn(1,'评论成功',[]);
+    	}else{
+    		return DataReturn(0, '评论失败',[]);
+    	}
+    }
+
+    /**
+     * [commentDel 删除评论]
+     * @return [type] [description]
+     */
+    public function commentDel(){
+
+    }
 }

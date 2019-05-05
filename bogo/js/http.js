@@ -1,6 +1,6 @@
 $(function(){
 	// 设置api 地址
-	const sUrl = 'http://www.uikiss.com/';
+	const sUrl = 'http://bogo.uikiss.cn/';
 
 	var domain = GetQueryString("bolg");
 	var arti = GetQueryString("arti");
@@ -91,6 +91,11 @@ $(function(){
 	
 
 
+function getLocalTime(nS) {     
+   return new Date(parseInt(nS) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ');     
+}
+
+
 	/**
 	* 文章的显示
 	* 评论的加载
@@ -101,8 +106,9 @@ $(function(){
 			var data = JSON.parse(data);
 			console.log(data);
 			// 文章内容显示
-			 $("#article_title").html(data.data.html.article_title);
-			 $("#article_text").html(data.data.html.article_text);
+			 // $("#article_title").html(data.data.html.article_title);
+			 // $("#article_text").html(data.data.html.article_text);
+			 $("#article_id").val(data.data.html.article_id);
 			 if(data.data.html.is_comment == 1){
 				$("#is_comment").show();
 			 }
@@ -112,44 +118,44 @@ $(function(){
 
 			 	commentHtml += '<div class="comment-show-con clearfix">';
 				commentHtml += '			<div class="comment-show-con-img pull-left" style="width: 38px;height: 38px;">';
-				commentHtml += '				<img src="images/header-img-comment_03.png" alt="">';
+				commentHtml += '				<img src="'+e.user_img+'" width="38px" alt="">';
 				commentHtml += '			</div>';
 				commentHtml += '			<div class="comment-show-con-list pull-left clearfix">';
 				commentHtml += '				<div class="pl-text clearfix">';
-				commentHtml += '					<a href="#" class="comment-size-name">'+e.user_nick+' : </a>';
+				commentHtml += '					<a href="javascript:void(0)" class="comment-size-name"><span class="userNick" data-id="'+e.comment_id+'">'+e.user_nick+'</span> : </a>';
 				commentHtml += '					<span class="my-pl-con">'+e.comment_val+'</span>';
 				commentHtml += '				</div>';
 				commentHtml += '				<div class="date-dz">';
-				commentHtml += '					<span class="date-dz-left pull-left comment-time">2017-5-2 11:11:39</span>';
+				commentHtml += '					<span class="date-dz-left pull-left comment-time">'+getLocalTime(e.comment_time)+'</span>';
 				commentHtml += '					<div class="date-dz-right pull-right comment-pl-block">';
 				commentHtml += '						<a href="javascript:;" class="removeBlock">删除</a>';
 				commentHtml += '						<a href="javascript:;" class="date-dz-pl pl-hf hf-con-block pull-left">回复</a>';
 				commentHtml += '						<span class="pull-left date-dz-line">|</span>';
-				commentHtml += '						<a href="javascript:;" class="date-dz-z pull-left"><i class="date-dz-z-click-red"></i>赞 (<i class="z-num">666</i>)</a>';
+				commentHtml += '						<a href="javascript:;" class="date-dz-z pull-left"><i class="date-dz-z-click-red"></i>赞 (<i class="z-num">'+e.click_num+'</i>)</a>';
 				commentHtml += '					</div>';
 				commentHtml += '				</div>';
+				commentHtml += '<div class="hf-list-con">';
 						if (e.children) {
 			 						e.children.forEach(function(f){
-										commentHtml += '<div class="hf-list-con">';
 										commentHtml += '	<div class="all-pl-con">';
 										commentHtml += '		<div class="pl-text hfpl-text clearfix">';
-										commentHtml += '			<a href="#" class="comment-size-name">'+f.user_nick+' : </a>';
+										commentHtml += '			<a href="#" class="comment-size-name"><span class="userNick" data-id="'+f.comment_id+'">'+f.user_nick+'</span><span style="color: #8b8b8b;"> 回复@</span>'+f.target_nick+':</a>';
 										commentHtml += '			<span class="my-pl-con">'+f.comment_val+'</span>';
 										commentHtml += '		</div>';
 										commentHtml += '		<div class="date-dz"> ';
-										commentHtml += '			<span class="date-dz-left pull-left comment-time">2019-10-10</span> ';
+										commentHtml += '			<span class="date-dz-left pull-left comment-time">'+getLocalTime(e.comment_time)+'</span> ';
 										commentHtml += '			<div class="date-dz-right pull-right comment-pl-block"> ';
 										commentHtml += '				<a href="javascript:;" class="removeBlock">删除</a> ';
 										commentHtml += '				<a href="javascript:;" class="date-dz-pl pl-hf hf-con-block pull-left">回复</a> ';
 										commentHtml += '				<span class="pull-left date-dz-line">|</span> ';
 										commentHtml += '				<a href="javascript:;" class="date-dz-z pull-left">';
-										commentHtml += '				<i class="date-dz-z-click-red"></i>赞 (<i class="z-num">666</i>)</a> ';
+										commentHtml += '				<i class="date-dz-z-click-red"></i>赞 (<i class="z-num">'+e.click_num+'</i>)</a> ';
 										commentHtml += '			</div> ';
 										commentHtml += '		</div>';
 										commentHtml += '		</div>';
-										commentHtml += '</div>';
 									 })
-						}
+							}
+				commentHtml += '</div>';
 				commentHtml += '			</div>';
 				commentHtml += '		</div> ';
 			 })
@@ -170,7 +176,6 @@ $(function(){
 			var data = JSON.parse(data);
 			var hotHtml = '';
 			var newHtml = '';
-			console.log(data);
 			// 热门
 			$.each(data.data.hot,function(key, val){
 			hotHtml += '<div class="col-md-3 col-sm-6 col-padding animate-box fadeInLeft animated" data-animate-effect="fadeInLeft">';

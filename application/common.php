@@ -1,5 +1,6 @@
 <?php
 
+use think\Db;
 // 应用公共文件
 
 /**
@@ -67,7 +68,7 @@ function commentBig($tree){
 	    if($leaf['target_id'] == 0) { 
 	    	unset($tree[$k1]);
 	    	// unset($leaf['children']);
-	    	$return[$leaf['comment_id']] = $leaf;
+	    	$return[] = $leaf; // $leaf['comment_id']
 	    } 
 	  }
 
@@ -96,8 +97,13 @@ function commentShow($aa){
     return $sb;
 }
 
+//*
+// 冒泡算法 根据时间戳来排序
 function maopaoTime($data){
 	for ($i=0; $i < count($data); $i++) { 
+		if (!empty($data[$i]['target_user_id'])) {
+			$data[$i]['target_nick'] = Db('blog_user')->where('user_id',$data[$i]['target_user_id'])->value('user_nick');
+		}
 		$bm = array();
 		for ($b = $i; $b < count($data)-1; $b++) { 
 			if ($data[$i]['comment_time'] > $data[$b+1]['comment_time']) {
