@@ -50,7 +50,7 @@ class admin extends Base
 		$param['limit'] = empty($param['limit']) ? 10: $param['limit'];
 
 		// 时间条件
-		$param['start'] = empty($param['start']) ? strtotime(date("Y-m-d ")."00:00:00"): strtotime($param['start']);
+		$param['start'] = empty($param['start']) ? 1: strtotime($param['start']);
 		$param['end'] = empty($param['end']) ? strtotime(date("Y-m-d ")."23:59:59"): strtotime($param['end']);
 		$where = " a.comment_time > {$param['start']} and a.comment_time < {$param['end']}";
 
@@ -61,6 +61,21 @@ class admin extends Base
 		  "code" => 0,
 		  "msg"=> "", 
 		  "count" => $count[0]['count(*)'], 
+		  "data"=> $data
+		];
+	}
+
+	public function userlist(){
+		$param = $this->request->param();
+		// 分页
+		$param['page'] = empty($param['page']) ? 1: $param['page'];
+		$param['limit'] = empty($param['limit']) ? 10: $param['limit'];
+
+		$data = Db('blog_user')->page($param['page'],$param['limit'])->order('user_id desc')->select();
+		return [
+		  "code" => 0,
+		  "msg"=> "", 
+		  "count" => Db('blog_user')->count(), 
 		  "data"=> $data
 		];
 	}

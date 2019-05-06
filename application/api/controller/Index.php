@@ -64,22 +64,18 @@ class Index extends Base
 		return DataReturn(1, '请求成功', $data);
 	}
 
-	public function artHotNew(){
-		$data['newd'] = ArticleModel::where('article_is_del',2)
-									->where('article_is_state', 1)
-									->order('article_time desc')
-									->field('article_title,article_nick,article_text,read_sum,article_img,click_sum,is_comment')
-									->limit(6)
-									->select()
-									->toArray();
+	public function artindex(){
 
-		$data['hot'] = ArticleModel::where('article_is_del',2)
-									->where('article_is_state', 1)
-									->field('article_title,article_nick,article_text,article_img,read_sum,click_sum,is_comment')
-									->order('article_hot desc')
-									->limit(6)
-									->select()
-									->toArray();
+		// 最新
+		$data['newd'] = ArticleModel::cateapi();
+		// 热门
+		$data['hot'] = ArticleModel::cateapi('article_hot');
+		// 导航图
+    	$data['banner'] = Db("blog_banner")
+    				->where('is_state',1)
+    				->field('banner_title,banner_id,banner_url,color,banner_img')
+    				->order('banner_time desc')
+    				->select();
 		return DataReturn(1, '请求成功', $data);
 	}
 
@@ -132,6 +128,28 @@ class Index extends Base
      * @return [type] [description]
      */
     public function commentDel(){
+    	return DataReturn('-1','暂不支持删除评论',[]);
+    }
 
+    /**
+     * [syslist 系统参数]
+     * @return [type] [description]
+     */
+    public function syslist(){
+
+    	// 前台参数
+    	$arr = ['homeCopyright','honeTitle'];
+    	$sys = Db('blog_sys')->select();
+    	$data = [];
+    	foreach ($sys as $key => $value) {
+    		if (in_array($value['name'],$arr)) {
+    			$data[] = $sys[$key];
+    		}
+    	}
+    		return DataReturn(1, '请求成功',$data);
+    }
+
+    public function _empty(){
+    	return ['很棒'];
     }
 }

@@ -45,7 +45,7 @@ $(function(){
 				html += '<li><a href="blog.html?bolg='+burl+'" data-cate_id="'+val['cate_id']+'">'+val['cate_name']+'</a></li>';
 			}
 		}); 
-			html += '<li><a href="contact.html">留言</a></li>';
+			// html += '<li><a href="contact.html">留言</a></li>';
 			$("#fh5co-main-menu").children("ul").append(html);
 	})
 	
@@ -166,13 +166,14 @@ function getLocalTime(nS) {
 
 
 	/**
-	* 前台获取热门  以及最新的博客
+	* 前台获取热门  以及最新的博客  banner
 	*/
 	var url = document.location.toString();
 	var arrObj = url.split("/");
 	var obj = arrObj[arrObj.length-1];
 	if(obj == '' || obj == 'index.html'){
-		$.get(sUrl+'api/index/artHotNew',function(data){
+		    $.ajaxSettings.async = false;
+		$.get(sUrl+'api/index/artindex',function(data){
 			var data = JSON.parse(data);
 			var hotHtml = '';
 			var newHtml = '';
@@ -183,8 +184,9 @@ function getLocalTime(nS) {
 			hotHtml += '<a href="details.html?arti='+val["article_id"]+'" class="blog-img"><img src="'+sUrl+val["article_img"]+'" class="img-responsive" alt="Free HTML5 Bootstrap Template by FreeHTML5.co"></a>';
 			hotHtml += '	<div class="desc">';
 			hotHtml += '	<h3><a href="details.html?arti='+val["article_id"]+'">'+val["article_title"]+'</a></h3>';
-			hotHtml += '		<span><small>'+val["article_nick"]+'</small> / <small> '+val["cate_name"]+' </small> / <small> <i class="icon-comment"></i> 2019-4-19</small></span>';
-			hotHtml += '		<p>Design must be functional and functionality must be translated into visual aesthetics</p>';
+			hotHtml += '		<span><small>'+val["article_nick"]+'</small> / <small> '+val["cate_data"]["cate_name"]+' </small> / <small> <i class="icon-comment"></i> 2019-4-19</small></span>';
+			var hh = val["introduction"] == '' || val["introduction"] == null ? '暂无简介<br><br><br>' : val["introduction"];//.substring(1,10);
+			hotHtml += '		<p>'+hh+'</p>';
 			hotHtml += '		<a href="details.html?arti='+val["article_id"]+'" class="lead">阅读文章 <i class="icon-arrow-right3"></i></a>';
 			hotHtml += '	</div>';
 			hotHtml += '</div>';
@@ -198,18 +200,50 @@ function getLocalTime(nS) {
 			newHtml += '<a href="details.html?arti='+val["article_id"]+'" class="blog-img"><img src="'+sUrl+val["article_img"]+'" class="img-responsive" alt="Free HTML5 Bootstrap Template by FreeHTML5.co"></a>';
 			newHtml += '	<div class="desc">';
 			newHtml += '	<h3><a href="details.html?arti='+val["article_id"]+'">'+val["article_title"]+'</a></h3>';
-			newHtml += '		<span><small>'+val["article_nick"]+'</small> / <small> '+val["cate_name"]+' </small> / <small> <i class="icon-comment"></i> 2019-4-19</small></span>';
-			newHtml += '		<p>Design must be functional and functionality must be translated into visual aesthetics</p>';
+			newHtml += '		<span><small>'+val["article_nick"]+'</small> / <small> '+val["cate_data"]["cate_name"]+' </small> / <small> <i class="icon-comment"></i> 2019-4-19</small></span>';
+			var hh = val["introduction"] == '' || val["introduction"] == null ? '暂无简介<br><br><br>' : val["introduction"];//.substring(1,10);
+			newHtml += '		<p>'+hh+'</p>';
 			newHtml += '		<a href="details.html?arti='+val["article_id"]+'" class="lead">阅读文章 <i class="icon-arrow-right3"></i></a>';
 			newHtml += '	</div>';
 			newHtml += '</div>';
 			newHtml += '</div>';	
 			})
+		/**
+		 *  获取banner 图
+		 */
+		var bannerHtml = '';
+			data.data.banner.forEach(function(e){
+				bannerHtml +='	   	<li style="background-image: url(http://bogo.uikiss.cn'+e.banner_img+');">';
+				bannerHtml +='	   		<div class="overlay"></div>';
+				bannerHtml +='	   		<div class="container-fluid">';
+				bannerHtml +='	   			<div class="row">';
+				bannerHtml +='		   			<div class="col-md-8 col-md-offset-2 text-center js-fullheight slider-text">';
+				bannerHtml +='		   				<div class="slider-text-inner">';
+				bannerHtml +='		   					<h1>'+e.banner_title+' <strong></strong> </h1>';
+				bannerHtml +='								<p><a class="btn btn-primary btn-demo popup-vimeo" href="javascript:void(0)"> <i class="icon-monitor"></i> 给我点赞 </a> <a class="btn btn-primary btn-learn" href="'+e.banner_url+'"> 前往围观 <i class="icon-arrow-right3"></i></a></p>';
+				bannerHtml +='		   				</div>';
+				bannerHtml +='		   			</div>';
+				bannerHtml +='		   		</div>';
+				bannerHtml +='	   		</div>';
+				bannerHtml +='	   	</li>';
+			})
+			$('.slides').html(bannerHtml);
 			$("#newBlog").append(newHtml);
 			$("#hotBlog").append(hotHtml);
 		})
+
 	}
+		
 	
+		$.get(sUrl+'api/index/syslist',function(data){
+			var data = JSON.parse(data);
+			console.log(data);
+			data.data.forEach(function(e){
+				var obj = '.'+e.name;
+				$(obj).html(e.value);
+			})
+		})
+
 	// 登录后显示问题
 	var loginData = localStorage.getItem('user_nick');
 	if (loginData) {

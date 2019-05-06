@@ -50,7 +50,7 @@ return [
 				'userlist' => [
 					'title' => '用户列表',
 					'icon' => '&#xe6a7;',
-					'url' => '/index/user/userlist'
+					'url' => '/index/user/index'
 				],
 			],
 		],
@@ -64,12 +64,25 @@ return [
 					'icon' => '&#xe6a7;',
 					'url' => '/index/admin/index'
 				],
-				// 'navlist' => [
-				// 	'title' => '文章分类',
-				// 	'icon' => '&#xe6a7;',
-				// 	'url' => '/index/article/cate'
-				// ],
 			],
+		],
+
+		'visitor' => [
+			'title'=>'访客数据',
+			'icon' => '&#xe726;',
+			'son' => [
+				'visitorlist' => [
+					'title' => '用户来源列表',
+					'icon' => '&#xe6a7;',
+					'url' => '/index/visitor/source'
+				],
+				'articlelist' => [
+					'title' => '访问文章统计',
+					'icon' => '&#xe6a7;',
+					'url' => '/index/visitor/articletj'
+				],
+			],
+
 		],
 
 		'system' => [

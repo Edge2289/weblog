@@ -1,0 +1,160 @@
+{include file="public/top"}
+    <body>
+        <div class="x-nav">
+            <span class="layui-breadcrumb">
+                <a href="">首页</a>
+                <a href="">评论管理</a>
+                <a>
+                    <cite>评论列表</cite></a>
+            </span>
+            <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" onclick="location.reload()" title="刷新">
+                <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i>
+            </a>
+        </div>
+        <div class="layui-fluid">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-body ">
+                            <form class="layui-form layui-col-space5">
+                                <div class="layui-inline layui-show-xs-block">
+                                    <input class="layui-input" autocomplete="off" placeholder="开始日" name="start" id="start"></div>
+                                <div class="layui-inline layui-show-xs-block">
+                                    <input class="layui-input" autocomplete="off" placeholder="截止日" name="end" id="end"></div>
+                                <div class="layui-inline layui-show-xs-block">
+                                    <button class="layui-btn" lay-submit="" data-type="reload" id="submit" onclick="return false" lay-filter="sreach">
+                                        <i class="layui-icon">&#xe615;</i></button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="layui-card-body ">
+                            <table class="layui-table" id="demo" lay-filter="demo"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script type="text/html" id="barDemo">
+      <a class="layui-btn layui-btn-danger" lay-event="del">删除</a>
+    </script>
+    <script>layui.use('laydate',
+        function() {
+            var laydate = layui.laydate;
+
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#start' //指定元素
+            });
+
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#end' //指定元素
+            });
+
+        });</script>
+
+    <script>
+    layui.use(['table','form'],function() {
+            var table = layui.table,
+            form = layui.form;
+
+            ///第一个实例
+              table.render({
+                elem: '#demo'
+                ,url: '/api/admin/userlist/' //数据接口
+                ,toolbar: '#toolbarDemo'
+                ,limits: [10,30,60,90]
+                ,page: true //开启分页
+                ,cols: [[ //表头
+                  {field: 'user_id', title: 'ID', width:80,fixed: 'left'}
+                  ,{field: 'user_nick', title: 'QQ昵称', width: 200}
+                  ,{field: 'user_qq', title: 'QQ凭证', width: 300}
+                  ,{field: 'user_img', title: '用户头像地址'}
+                  ,{field: 'is_status', title: '状态', width: 100,templet:function(e){
+                      if (e.is_status == 1) {
+                        return '<input type="checkbox" name="is_status" lay-filter="is_status" data-id="'+e.user_id+'" lay-skin="switch" lay-text="ON|OFF" checked>';
+                      }else{
+                        return '<input type="checkbox" name="is_status" lay-filter="is_status" data-id="'+e.user_id+'"  lay-skin="switch" lay-text="ON|OFF">';
+                      }
+                  }}
+                  ,{field: 'register_time', title: '加入时间', width: 200,templet:function(e){
+                    return  new Date(parseInt(e.register_time) * 1000).toLocaleString().substr(0,17);
+                  }}
+                  ,{field: 'is_comment', title: '评论', width: 200,templet:function(e){
+                    if (e.is_comment == 1) {
+                      return '<input type="checkbox" name="is_comment" lay-filter="is_comment" data-id="'+e.user_id+'" lay-skin="switch" lay-text="ON|OFF" checked>';
+                    }else{
+                      return '<input type="checkbox" name="is_comment" lay-filter="is_comment" data-id="'+e.user_id+'" lay-skin="switch" lay-text="ON|OFF">';
+                    }
+                  }}
+                  // ,{field: 'wealth', title: '操作', toolbar: '#barDemo', width: 150,fixed: 'right'}
+                ]]
+                ,id: 'listreload'
+              });
+
+
+            //监听工具条
+                table.on('tool(demo)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+                  var data = obj.data; //获得当前行数据
+                  var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+                  var tr = obj.tr; //获得当前行 tr 的DOM对象
+                 
+                  if(layEvent === 'del'){ //删除
+                    layer.confirm('真的删除行么', function(index){
+
+                      layer.close(index);
+                      obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                      //向服务端发送删除指令
+                    });
+                  }
+                });
+
+                // 评论
+                form.on('switch(is_comment)',function(data){
+                  var is_comment = this.checked ? '1' : 0;
+                  var user_id = $(this).attr('data-id');
+                  $.get('{:Url("user/userupd")}',{'is_comment':is_comment,'user_id':user_id},function(data){
+                    var data = JSON.parse(data);
+                    layer.msg(data.msg);
+                  })
+                })
+                // 状态
+                form.on('switch(is_status)',function(data){
+                  var is_status = this.checked ? '1' : 0;
+                  var user_id = $(this).attr('data-id');
+                  $.get('{:Url("user/userupd")}',{'is_status':is_status,'user_id':user_id},function(data){
+                    var data = JSON.parse(data);
+                    layer.msg(data.msg);
+                  })
+                })
+
+                var $ = layui.$, active = {
+                    reload: function(){
+                      var start = $('#start').val();
+                      var end = $('#end').val();
+                      var title = $('#title').val();
+                      //执行重载
+                      table.reload('listreload', {
+                        page: {
+                          curr: 1 //重新从第 1 页开始
+                        }
+                        ,where: {
+                          key: {
+                            start: start,
+                            end: end,
+                            title: title
+                          }
+                        }
+                      });
+                    }
+                  };
+                   $('#submit').on('click', function(){
+                        var type = $(this).data('type');
+                        active[type] ? active[type].call(this) : '';
+                      });
+
+        });</script>
+
+</html>

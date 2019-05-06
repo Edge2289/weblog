@@ -21,6 +21,14 @@ class ArticleModel extends Model
 		return $this->hasOne('CateModel','cate_id','cate_id');
 	}
 
+	public function getIntroductionAttr($value){
+		if (strlen($value) > 165) {
+			return mb_substr($value,0,55,'utf-8').'...';
+		}
+
+		return mb_substr($value,0,55,'utf-8');
+	}
+
 	public static function articlelist($param){
 
 		$page = empty($param['page']) ? 1 : $param['page'];
@@ -71,6 +79,24 @@ class ArticleModel extends Model
 		}else{
 			$data = Db::query("SELECT a.article_id,a.article_title,a.article_img,a.article_nick,a.article_time,b.cate_name FROM blog_article a INNER JOIN blog_cate b ON b.cate_id = a.cate_id ORDER BY a.article_time DESC");
 		}
+		return $data;
+	}
+
+
+	public static function cateapi($type = 'article_time'){
+		$ordertype = $type == 'article_time' ? 'article_time desc' : 'article_hot desc';
+		$data = self::with([
+						'cateData'=>function($cate){
+							$cate->field('cate_id,cate_name');
+						}
+					])
+					->where('article_is_del',2)
+					->where('article_is_state', 1)
+					->order($ordertype)
+					->field('article_id,cate_id,introduction,article_title,article_nick,article_text,read_sum,article_img,click_sum,is_comment')
+					->limit(6)
+					->select()
+					->toArray();
 		return $data;
 	}
 }
