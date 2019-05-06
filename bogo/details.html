@@ -216,7 +216,7 @@
 		// 根据前台的数据去判断用户登录是否过期
 		var static = 0;
 		$.ajaxSettings.async = false;
-		$.get('http://bogo.uikiss.cn/api/index/isLogin',{'user_qq' : localStorage.getItem("user_qq"),
+		$.get(sUrl+'api/index/isLogin',{'user_qq' : localStorage.getItem("user_qq"),// http://bogo.uikiss.cn/
 				'access_token' : localStorage.getItem("access_token"),},function(data){
 				var data = JSON.parse(data);
 				if (data.code == -1) {
@@ -231,7 +231,8 @@
 		if (static) {
 			return false;
 		}	
-
+		console.log(1);
+return false;
         //获取输入内容
 		// 所需的参数
         var sNick = localStorage.getItem("user_nick");
@@ -241,7 +242,7 @@
 		// 往后台push数据
 		$.ajax({
 			'type' : 'post',
-			'url' : 'http://bogo.uikiss.cn/api/index/commentIns',
+			'url' : sUrl+'api/index/commentIns',
 			'data' : {'sqq':sqq,'oSize':oSize,'aid':$("#article_id").val()},
 			'dataType' : 'json',
 			success:function(data){
@@ -341,7 +342,7 @@
         // 往后台push数据
 		$.ajax({
 			'type' : 'post',
-			'url' : 'http://bogo.uikiss.cn/api/index/commentIns',
+			'url' : sUrl+'api/index/commentIns',
 			'data' : {'sqq':sqq,'oSize':oHfVal,'tid':target_id,'aid':$("#article_id").val()},
 			'dataType' : 'json',
 			success:function(data){

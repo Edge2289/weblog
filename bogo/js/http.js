@@ -1,6 +1,7 @@
-$(function(){
+
 	// 设置api 地址
-	const sUrl = 'http://bogo.uikiss.cn/';
+const sUrl = 'http://bogo.uikiss.cn/';
+$(function(){
 
 	var domain = GetQueryString("bolg");
 	var arti = GetQueryString("arti");
