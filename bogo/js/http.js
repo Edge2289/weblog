@@ -185,7 +185,7 @@ function getLocalTime(nS) {
 			hotHtml += '	<div class="desc">';
 			hotHtml += '	<h3><a href="details.html?arti='+val["article_id"]+'">'+val["article_title"]+'</a></h3>';
 			hotHtml += '		<span><small>'+val["article_nick"]+'</small> / <small> '+val["cate_data"]["cate_name"]+' </small> / <small> <i class="icon-comment"></i> 2019-4-19</small></span>';
-			var hh = val["introduction"] == '' || val["introduction"] == null ? '暂无简介<br><br><br>' : val["introduction"];//.substring(1,10);
+			var hh = val["introduction"] == '' || val["introduction"] == null ? '暂无简介<br><br>' : val["introduction"];//.substring(1,10);
 			hotHtml += '		<p>'+hh+'</p>';
 			hotHtml += '		<a href="details.html?arti='+val["article_id"]+'" class="lead">阅读文章 <i class="icon-arrow-right3"></i></a>';
 			hotHtml += '	</div>';
@@ -201,7 +201,7 @@ function getLocalTime(nS) {
 			newHtml += '	<div class="desc">';
 			newHtml += '	<h3><a href="details.html?arti='+val["article_id"]+'">'+val["article_title"]+'</a></h3>';
 			newHtml += '		<span><small>'+val["article_nick"]+'</small> / <small> '+val["cate_data"]["cate_name"]+' </small> / <small> <i class="icon-comment"></i> 2019-4-19</small></span>';
-			var hh = val["introduction"] == '' || val["introduction"] == null ? '暂无简介<br><br><br>' : val["introduction"];//.substring(1,10);
+			var hh = val["introduction"] == '' || val["introduction"] == null ? '暂无简介<br><br>' : val["introduction"];//.substring(1,10);
 			newHtml += '		<p>'+hh+'</p>';
 			newHtml += '		<a href="details.html?arti='+val["article_id"]+'" class="lead">阅读文章 <i class="icon-arrow-right3"></i></a>';
 			newHtml += '	</div>';

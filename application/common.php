@@ -67,8 +67,8 @@ function commentBig($tree){
 	  foreach($tree as $k1 => $leaf) { 
 	    if($leaf['target_id'] == 0) { 
 	    	unset($tree[$k1]);
-	    	// unset($leaf['children']);
-	    	$return[] = $leaf; // $leaf['comment_id']
+	    	$leaf['comment_val'] = htmlentities($leaf['comment_val']);
+	    	$return[] = $leaf; 
 	    } 
 	  }
 
@@ -82,7 +82,7 @@ function commentBig($tree){
     return $return; 
 }
 
-
+// 将子类排序出来
 function commentShow($aa){
     $sb = array();
     foreach($aa as $v){
@@ -104,6 +104,7 @@ function maopaoTime($data){
 		if (!empty($data[$i]['target_user_id'])) {
 			$data[$i]['target_nick'] = Db('blog_user')->where('user_id',$data[$i]['target_user_id'])->value('user_nick');
 		}
+		$data[$i]['comment_val'] = htmlentities($data[$i]['comment_val']);
 		$bm = array();
 		for ($b = $i; $b < count($data)-1; $b++) { 
 			if ($data[$i]['comment_time'] > $data[$b+1]['comment_time']) {
