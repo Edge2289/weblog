@@ -57,7 +57,7 @@ class Index extends Base
 					->field('article_id,article_title,article_nick,article_text,read_sum,click_sum,is_comment')
 					->find()
 					->toArray();
-		// $comment = Db::query('SELECT a.*,b.user_nick as target_nick,c.user_nick,c.user_img FROM blog_comment a left JOIN blog_user b ON a.target_id = b.user_id left JOIN blog_user c ON a.user_id = c.user_id where a.article_id = '.$article_id.' order by comment_id desc');
+
 		$comment = Db::query('SELECT a.*,b.user_id AS target_user_id,c.user_nick,c.user_img FROM blog_comment a LEFT JOIN blog_comment b ON a.target_id = b.comment_id left JOIN blog_user c ON a.user_id = c.user_id where a.article_id = '.$article_id.' order by comment_id desc');
 		$data['comment'] = commentTree($comment);
 		$data['comment'] = commentBig($data['comment']);
@@ -111,7 +111,7 @@ class Index extends Base
     	if (!empty($param['tid'])) {
     		$map['target_id'] = $param['tid'];
     	}
-    	$map['comment_val'] = $param['oSize'];
+    	$map['comment_val'] = htmlentities($param['oSize']);
     	$map['user_id'] = $userI;
     	$map['article_id'] = $param['aid'];
     	$map['comment_time'] = time();

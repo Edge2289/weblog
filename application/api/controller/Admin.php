@@ -55,7 +55,7 @@ class admin extends Base
 		$where = " a.comment_time > {$param['start']} and a.comment_time < {$param['end']}";
 
 		$data = Db::query('select a.*,b.comment_val as target_val,c.user_nick from blog_comment a left join blog_comment b on b.comment_id = a.target_id left join blog_user c on c.user_id = a.user_id where '.$where.' order by a.comment_id desc limit '.($param['page']-1).','.($param['page']*$param['limit']));
-		// dd($data);
+		
 		$count = Db::query('select count(*) from blog_comment a where '.$where);
 		return [
 		  "code" => 0,
