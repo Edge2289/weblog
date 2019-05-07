@@ -231,8 +231,6 @@
 		if (static) {
 			return false;
 		}	
-		console.log(1);
-return false;
         //获取输入内容
 		// 所需的参数
         var sNick = localStorage.getItem("user_nick");
@@ -312,6 +310,33 @@ return false;
 <!--评论回复块创建-->
 <script type="text/javascript">
     $('.comment-show').on('click','.hf-pl',function(){
+    	// 先判断用户是否登录
+		// 登录后显示问题
+		// 回复评论时判断用户是否登录
+		var data = localStorage.getItem("user_nick");
+		if (data == null) {
+			$("#yincanmoyitai").trigger('click');
+			return false;
+		}
+		// 根据前台的数据去判断用户登录是否过期
+		var static = 0;
+		$.ajaxSettings.async = false;
+		$.get(sUrl+'api/index/isLogin',{'user_qq' : localStorage.getItem("user_qq"),// http://bogo.uikiss.cn/
+				'access_token' : localStorage.getItem("access_token"),},function(data){
+				var data = JSON.parse(data);
+				if (data.code == -1) {
+					alert("登录已过期");
+					localStorage.clear();
+					$(".login").show();
+					$(".logutout").hide();
+					static = 1;
+					return false;
+				}
+		})		
+		if (static) {
+			return false;
+		}	
+    	
         var oThis = $(this);
         var myDate = new Date();
         //获取当前年

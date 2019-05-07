@@ -31,5 +31,15 @@ class Visitor extends Base
      */
 	public function articletj(){
 
+		return $this->fetch();
+	}
+
+	/**
+	 * [userloglist 用户登录的日志]
+	 * @return [type] [description]
+	 */
+	public function userloglist(){
+
+		return $this->fetch();
 	}
 }	

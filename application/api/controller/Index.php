@@ -149,6 +149,24 @@ class Index extends Base
     		return DataReturn(1, '请求成功',$data);
     }
 
+
+    /**
+     * [userlogin 登录日志]
+     * @return [type] [description]
+     */
+    public function userlogin(){
+
+        $map['user_qq'] = input('get.user_qq');
+        $map['ip'] = getIPInfo();
+        $reload = getCity($map['ip']);
+        $map['region'] = $reload['data']['region'];
+        $map['city'] = $reload['data']['city'];
+        $info = explode (" ",$reload["info"]);
+        $map['source_phone'] = getOS();//$info[count($info)-1];
+        $map['source_safari'] = $info[count($info)-2];
+        dd($map);
+    }
+
     public function _empty(){
     	return ['很棒'];
     }

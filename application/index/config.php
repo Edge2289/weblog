@@ -81,6 +81,11 @@ return [
 					'icon' => '&#xe6a7;',
 					'url' => '/index/visitor/articletj'
 				],
+				'loglist' => [
+					'title' => '用户登录数据',
+					'icon' => '&#xe6a7;',
+					'url' => '/index/visitor/userloglist'
+				],
 			],
 
 		],

@@ -24,6 +24,9 @@ $(function(){
 			localStorage.setItem(a[0],a[1]);
 		}
 		localStorage.setItem('userData',sendData);
+		$.get(sUrl+'api/index/userlogin',{'user_qq':sendData['user_qq']},function(data){
+
+		})
 	}
 
 	// 获取首页分类标签
@@ -264,13 +267,6 @@ function getLocalTime(nS) {
 		$(".login").show();
 		$(".logutout").hide();
 	})
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
 })

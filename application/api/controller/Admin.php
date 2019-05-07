@@ -5,6 +5,7 @@ use think\Db;
 use think\Request;
 use app\api\common\Base;
 use app\common\model\BannerModel;
+use app\common\model\SourceModel;
 /**
 *  后台api接口
 */
@@ -65,6 +66,10 @@ class admin extends Base
 		];
 	}
 
+	/**
+	 * [userlist 用户列表数据]
+	 * @return [type] [description]
+	 */
 	public function userlist(){
 		$param = $this->request->param();
 		// 分页
@@ -78,5 +83,61 @@ class admin extends Base
 		  "count" => Db('blog_user')->count(), 
 		  "data"=> $data
 		];
+	}
+
+	/**
+	 * [sourcelist 访问数据统计]
+	 * @return [type] [description]
+	 */
+	public function sourcelist(){
+
+		$param = $this->request->param();
+		// 分页
+		$param['page'] = empty($param['page']) ? 1: $param['page'];
+		$param['limit'] = empty($param['limit']) ? 10: $param['limit'];
+		// 时间条件
+		$param['start'] = empty($param["key"]['start']) ? 1: strtotime($param["key"]['start']);
+		$param['end'] = empty($param["key"]['end']) ? strtotime(date("Y-m-d ")."23:59:59"): strtotime($param["key"]['end']."23:59:59");
+
+		$data = SourceModel::sourcelist($param);
+		return [
+		  "code" => 0,
+		  "msg"=> "", 
+		  "count" => $data['count'], 
+		  "data"=> $data['list']
+		];
+	}
+
+
+	public function userloglist(){
+
+
+		$param = $this->request->param();
+		// 分页
+		$param['page'] = empty($param['page']) ? 1: $param['page'];
+		$param['limit'] = empty($param['limit']) ? 10: $param['limit'];
+		// 时间条件
+		$param['start'] = empty($param["key"]['start']) ? 1: strtotime($param["key"]['start']);
+		$param['end'] = empty($param["key"]['end']) ? strtotime(date("Y-m-d ")."23:59:59"): strtotime($param["key"]['end']."23:59:59");
+
+		$where = 'time > '.$param["start"].' and time < '.$param["end"];
+
+		$data['list'] = Db('blog_userlogin_log')
+						->alias('a')
+						->join("blog_user b","a.user_qq = b.user_qq",'left')
+						->where($where)
+						->page($param['page'],$param['limit'])
+						->order('log_id desc')
+						->field('a.*,b.user_nick')
+						->select();
+		$data['count'] = Db('blog_userlogin_log')
+						->where($where)
+						->count();
+		return [
+		  "code" => 0,
+		  "msg"=> "", 
+		  "count" => $data['count'], 
+		  "data"=> $data['list']
+		];			
 	}
 }
