@@ -7,6 +7,13 @@ $(function(){
 	var arti = GetQueryString("arti");
 	var time = GetQueryString("time");
 
+	var outTime = (new Date()).valueOf();
+	var startTime = localStorage.getItem('user_time');
+	if ((outTime - startTime) > 1800000) {
+		localStorage.clear();
+	}else{
+		localStorage.setItem('user_time',(new Date()).valueOf());
+	}
 	// 实现登录操作
 	if (time) {
 
@@ -23,10 +30,10 @@ $(function(){
 			sendData[a[0]] = a[1];
 			localStorage.setItem(a[0],a[1]);
 		}
-		localStorage.setItem('userData',sendData);
-		$.get(sUrl+'api/index/userlogin',{'user_qq':sendData['user_qq']},function(data){
+		localStorage.setItem('user_time',(new Date()).valueOf());
+		// $.get(sUrl+'api/index/userlogin',{'user_qq':sendData['user_qq']},function(data){
 
-		})
+		// })
 	}
 
 	// 获取首页分类标签
@@ -83,7 +90,8 @@ $(function(){
 			html += '	<div class="desc">';
 			html += '	<h3><a href="details.html?arti='+val["article_id"]+'">'+val["article_title"]+'</a></h3>';
 			html += '		<span><small>'+val["article_nick"]+'</small> / <small> '+val["cate_name"]+' </small> / <small> <i class="icon-comment"></i> 2019-4-19</small></span>';
-			html += '		<p>Design must be functional and functionality must be translated into visual aesthetics</p>';
+			var hh = val["introduction"] == '' || val["introduction"] == null ? '暂无简介<br><br>' : val["introduction"];//.substring(1,10);
+			html += '		<p>'+hh+'</p>';
 			html += '		<a href="details.html?arti='+val["article_id"]+'" class="lead">阅读文章 <i class="icon-arrow-right3"></i></a>';
 			html += '	</div>';
 			html += '</div>';
@@ -268,5 +276,56 @@ function getLocalTime(nS) {
 		$(".logutout").hide();
 	})
 
+	/**
+	 * [referer 访问记录操作]
+	 * @type {[type]}
+	 */
+	var referer = document.referrer, // 来源信息
+	localhref = window.location.href; // 链接
+	$.get(sUrl+'api/index/sourceget',{
+		"referer" : referer,
+		"localhref" : localhref,
+	},function(){
+		// 没有操作
+	})
+
+
+	// 封装cookie 使用方法 
+	var cookie = {
+	    set:function(key,val,time){//设置cookie方法
+	        var date=new Date(); //获取当前时间
+	        var expiresDays=time;  //将date设置为n天以后的时间
+	        date.setTime(date.getTime()+expiresDays*24*3600*1000); //格式化为cookie识别的时间
+	        document.cookie=key + "=" + val +";expires="+date.toGMTString();  //设置cookie
+	    },
+	    get:function(key){//获取cookie方法
+	        /*获取cookie参数*/
+	        var getCookie = document.cookie.replace(/[ ]/g,"");  //获取cookie，并且将获得的cookie格式化，去掉空格字符
+	        var arrCookie = getCookie.split(";")  //将获得的cookie以"分号"为标识 将cookie保存到arrCookie的数组中
+	        var tips;  //声明变量tips
+	        for(var i=0;i<arrCookie.length;i++){   //使用for循环查找cookie中的tips变量
+	            var arr=arrCookie[i].split("=");   //将单条cookie用"等号"为标识，将单条cookie保存为arr数组
+	            if(key==arr[0]){  //匹配变量名称，其中arr[0]是指的cookie名称，如果该条变量为tips则执行判断语句中的赋值操作
+	                tips=arr[1];   //将cookie的值赋给变量tips
+	                break;   //终止for循环遍历
+	            }
+	    	}
+	        return tips;
+	    },
+	    delete:function(key){ //删除cookie方法
+	         var date = new Date(); //获取当前时间
+	         date.setTime(date.getTime()-10000); //将date设置为过去的时间
+	         document.cookie = key + "=v; expires =" +date.toGMTString();//设置cookie
+	    }
+	}
+	var cookieItem = cookie.get('user_cookie');
+	if (!cookieItem) {
+		cookie.set('user_cookie',1131191695+"_"+(new Date()).valueOf());
+		$.get(sUrl+'api/index/uvcollect',{
+			'uv' : '1',
+		},function(){
+			'你的快递已经到达';
+		})
+	}
 
 })

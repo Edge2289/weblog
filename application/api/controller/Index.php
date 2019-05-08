@@ -164,7 +164,52 @@ class Index extends Base
         $info = explode (" ",$reload["info"]);
         $map['source_phone'] = getOS();//$info[count($info)-1];
         $map['source_safari'] = $info[count($info)-2];
-        dd($map);
+        Db('blog_userlogin_log')->insert($map); // 进行数据插入操作
+    }
+
+    /**
+     * [sourceget 访问数据]
+     * @return [type] [description]
+     */
+    public function sourceget(){
+        $param = Request()->param();
+        if (empty($param['localhref'])) {
+            return ['参数错误'];
+            die;
+        }
+        /**
+         * [$refere 返回]
+         * @var  keyWord [关键词]
+         * @var  fromtype [过来的平台]
+         * @var [type]
+         */
+        $refere = getSourceCli($param['referer']);
+        $map['source_url'] =  $param['localhref'];   //  来源
+        $map['source_keywork'] =  $refere['keyWord'];
+        $map['source_referer'] =  $refere['fromtype'] == "手动打开" ? "manually" : $refere['fromtype'];
+        $map['source_ip'] =  getIPInfo();  // ip
+        $m = getCity($map['source_ip']);
+        $map['source_city'] =  $m['data']['city'];        // 城市
+        $map['source_region'] =  $m['data']['region'];   // 省份 
+
+        $info = explode (" ",$m["info"]);
+        $map['source_phone'] =  getOS();   // 操作系统 
+        $map['source_safari'] =  $info[count($info)-2];  // 浏览器类型 
+        $map['source_time'] =  time();   // 时间 
+        // Db('blog_source')->insert($map);
+    }
+
+    /**
+     * [uvcollect uv 收集api记录]
+     * @return [type] [description]
+     */
+    public function uvcollect(){
+        /**
+         * id  
+         * cookie
+         * time 
+         */
+
     }
 
     public function _empty(){

@@ -109,8 +109,47 @@ class admin extends Base
 	}
 
 
-	public function userloglist(){
+	/**
+	 * [sourcelist 访问文章统计]
+	 * @return [type] [description]
+	 */
+	public function articletjlist(){
 
+		$param = $this->request->param();
+		// 分页
+		$param['page'] = empty($param['page']) ? 1: $param['page'];
+		$param['limit'] = empty($param['limit']) ? 10: $param['limit'];
+		// 时间条件
+		$param['start'] = empty($param["key"]['start']) ? 1: strtotime($param["key"]['start']);
+		$param['end'] = empty($param["key"]['end']) ? strtotime(date("Y-m-d ")."23:59:59"): strtotime($param["key"]['end']."23:59:59");
+
+		$data = SourceModel::articlelist($param);
+		return [
+		  "code" => 0,
+		  "msg"=> "", 
+		  "count" => $data['count'], 
+		  "data"=> $data['list']
+		];
+	}
+
+
+	public function iplist(){
+		$param = $this->request->param();
+		// 分页
+		$param['page'] = empty($param['page']) ? 1: $param['page'];
+		$param['limit'] = empty($param['limit']) ? 10: $param['limit'];
+		// 时间条件
+		$param['start'] = empty($param["key"]['start']) ? 1: strtotime($param["key"]['start']);
+		$param['end'] = empty($param["key"]['end']) ? strtotime(date("Y-m-d ")."23:59:59"): strtotime($param["key"]['end']."23:59:59");
+
+		$b = SourceModel::iplist($param);
+		dd($b);
+	}
+	/**
+	 * [userloglist 用户登录统计]
+	 * @return [type] [description]
+	 */
+	public function userloglist(){
 
 		$param = $this->request->param();
 		// 分页

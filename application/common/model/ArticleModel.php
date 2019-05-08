@@ -52,6 +52,7 @@ class ArticleModel extends Model
 						}
 					])
 					->where($where)
+					->order('article_id desc')
 					->field('article_id,article_title,article_img,article_nick,article_is_state,article_hot,admin_id,article_time,cate_id,read_sum,click_sum,is_comment')
 					->select();
 
@@ -75,9 +76,9 @@ class ArticleModel extends Model
 	 */
 	public static function articleSel($type = 0){
 		if (!empty($type)) {
-			$data = Db::query("SELECT a.article_id,a.article_title,a.article_img,a.article_nick,a.article_time,b.cate_name FROM blog_article a INNER JOIN blog_cate b ON b.cate_id = a.cate_id WHERE b.cate_name = '{$type}' ORDER BY a.article_time DESC");
+			$data = Db::query("SELECT a.article_id,a.introduction,a.article_title,a.article_img,a.article_nick,a.article_time,b.cate_name FROM blog_article a INNER JOIN blog_cate b ON b.cate_id = a.cate_id WHERE b.cate_name = '{$type}' ORDER BY a.article_time DESC");
 		}else{
-			$data = Db::query("SELECT a.article_id,a.article_title,a.article_img,a.article_nick,a.article_time,b.cate_name FROM blog_article a INNER JOIN blog_cate b ON b.cate_id = a.cate_id ORDER BY a.article_time DESC");
+			$data = Db::query("SELECT a.article_id,a.introduction,a.article_title,a.article_img,a.article_nick,a.article_time,b.cate_name FROM blog_article a INNER JOIN blog_cate b ON b.cate_id = a.cate_id ORDER BY a.article_time DESC");
 		}
 		return $data;
 	}

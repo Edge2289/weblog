@@ -28,7 +28,7 @@ class SourceModel extends Model
 	 * [iplist ip 访问量]
 	 * @return [type] [description]
 	 */
-	public function iplist(){
+	public static function iplist($param){
 		$where = 'source_time > '.$param["start"].' and source_time < '.$param["end"];
 
 		$data['list'] = self::where($where)
@@ -37,8 +37,10 @@ class SourceModel extends Model
 						->order('source_id desc')
 						->select()
 						->toArray();
-		$data['count'] = self::where($where)->page($param['page'],$param['limit'])->count();
-				return $data;
+		$data['count'] = self::where($where)
+						->group('source_ip')
+						->page($param['page'],$param['limit'])->count();
+		return $data;
 
 	}
 
@@ -46,7 +48,19 @@ class SourceModel extends Model
 	 * [uvlist uv 访问量 数据]
 	 * @return [type] [description]
 	 */
-	public function uvlist(){
+	public function uvlist($param){
 
+	}
+
+	/**
+	 * [articletjlist 访问文章]
+	 * @return [type] [description]
+	 */
+	public static function articlelist($param){
+		$where = 'source_url like "%details.html?arti%" and';
+		$where .= ' source_time > '.$param["start"].' and source_time < '.$param["end"];
+		$data['list'] = self::where($where)->page($param['page'],$param['limit'])->order('source_id desc')->select()->toArray();
+		$data['count'] = self::where($where)->page($param['page'],$param['limit'])->count();
+		return $data;
 	}
 }
