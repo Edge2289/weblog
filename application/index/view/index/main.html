@@ -192,14 +192,14 @@
         // 指定图表的配置项和数据
         var option = {
             tooltip : {
-                formatter: "{a} <br/>{b} : {c}%"
+                formatter: "{a}总：{$gaugeCount} <br/>{b} : {c}%"
             },
             series: [
                 {
                     name: '硬盘使用量',
                     type: 'gauge',
                     detail: {formatter:'{value}%'},
-                    data: [{value: 45, name: '已使用'}]
+                    data: [{value: "{$gauge}", name: '已使用'}]
                 }
             ]
         };

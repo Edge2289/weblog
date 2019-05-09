@@ -19,7 +19,8 @@ class Index extends Base
 
     public function main()
     {
-        dd(dailStatisticsDiskRoom());
+        $gauge = dailStatisticsDiskRoom();
+        $g = explode('%','40%');//$gauge[4]);
         $startTime = strtotime(Date("Y-m-").'1 00:00:00');
         $user = Db::query("SELECT FROM_UNIXTIME(time,'%d') days,COUNT(uv_id) count FROM blog_uv where time > ".$startTime." GROUP BY days;");  // $用户登录 数据
         $pv = Db::query("SELECT FROM_UNIXTIME(source_time,'%d') days,COUNT(source_id) count FROM blog_source where source_time > ".$startTime." GROUP BY days;"); // $pv 数据
@@ -52,6 +53,8 @@ class Index extends Base
                 'pvData' => json_encode($pv1Data),
                 'uvData' => json_encode($uv1Data),
                 't' => $t,
+                'gauge' => $g[0],
+                'gaugeCount' => empty($gauge[1]) ? "20G" : $gauge[1],
             ]);
         return $this->fetch('main');
     }
