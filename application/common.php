@@ -296,3 +296,13 @@ function getOS()
 
   return $platform;
 }     
+
+function dailStatisticsDiskRoom(){
+
+  $fd = popen('df -lh | grep -E "^(/)"', "r");
+  $rs = fread($fd, 1024);
+  pclose($fd);
+  $rs = preg_replace("/\s{2,}/", ' ', $rs);
+  $hd = explode(" ", $rs);
+  return $hd;
+}

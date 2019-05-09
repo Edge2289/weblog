@@ -322,7 +322,7 @@ function getLocalTime(nS) {
 	if (!cookieItem) {
 		cookie.set('user_cookie',1131191695+"_"+(new Date()).valueOf());
 		$.get(sUrl+'api/index/uvcollect',{
-			'uv' : '1',
+			'cookie' : cookie.get('user_cookie'),
 		},function(){
 			'你的快递已经到达';
 		})

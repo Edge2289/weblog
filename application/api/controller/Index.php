@@ -209,7 +209,13 @@ class Index extends Base
          * cookie
          * time 
          */
-
+        if (!Request()->isGet()) {
+            return ['很棒'];
+        }
+        $map['cookie'] = input('get.cookie');
+        $map['time'] = time();
+        $map['ip'] = getIPInfo();
+        // Db('blog_uv')->insert($map);
     }
 
     public function _empty(){

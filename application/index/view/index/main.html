@@ -5,7 +5,7 @@
 
                 <div class="layui-col-sm12 layui-col-md6">
                     <div class="layui-card">
-                        <div class="layui-card-header">最新一周新增用户</div>
+                        <div class="layui-card-header">一月内用户登录次数</div>
                         <div class="layui-card-body" style="min-height: 280px;">
                             <div id="main1" class="layui-col-sm12" style="height: 300px;"></div>
 
@@ -14,7 +14,7 @@
                 </div>
                 <div class="layui-col-sm12 layui-col-md6">
                     <div class="layui-card">
-                        <div class="layui-card-header">最新一周PV/UV量</div>
+                        <div class="layui-card-header">最新一月PV/UV量</div>
                         <div class="layui-card-body" style="min-height: 280px;">
                             <div id="main2" class="layui-col-sm12" style="height: 300px;"></div>
 
@@ -48,6 +48,13 @@
         // 基于准备好的dom，初始化echarts实例
         var myChart = echarts.init(document.getElementById('main1'));
 
+// 获取数据
+        var tian = "{$t}";
+        var timeData = [];
+        for(var i = 0;i<tian;i++){
+            timeData.push(i+1);
+        };
+
         // 指定图表的配置项和数据
         var option = {
             grid: {
@@ -62,7 +69,7 @@
             },
             xAxis: {
                 type: 'category',
-                data: ['周一','周二','周三','周四','周五','周六','周日']
+                data: timeData
             },
             yAxis: {
                 type: 'value'
@@ -104,7 +111,7 @@
                 {
                     type : 'category',
                     boundaryGap : false,
-                    data : ['周一','周二','周三','周四','周五','周六','周日']
+                    data : timeData
                 }
             ],
             yAxis : [
@@ -117,14 +124,14 @@
                     name:'PV',
                     type:'line',
                     areaStyle: {normal: {}},
-                    data:[120, 132, 101, 134, 90, 230, 210],
+                    data: JSON.parse("{$pvData}"),
                     smooth: true
                 },
                 {
                     name:'UV',
                     type:'line',
                     areaStyle: {normal: {}},
-                    data:[45, 182, 191, 234, 290, 330, 310],
+                    data: JSON.parse("{$uvData}"),
                     smooth: true,
 
                 }
