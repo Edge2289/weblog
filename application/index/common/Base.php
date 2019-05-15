@@ -1,6 +1,7 @@
 <?php
 namespace app\index\common;
 
+use think\Db;
 use think\Config;
 use think\Session;
 use think\Controller;
@@ -21,6 +22,7 @@ class Base extends Controller
 		$this->isLogin();
 		$this->assign('nav' , Config::get('nav'));
 		$this->assign('title' , '后台系统');
+		$this->assign('adminTitle' , Db('blog_sys')->where('name','adminTitle')->value('value'));
 	}
 
 	public function isLogin(){

@@ -14,8 +14,8 @@ class Index extends Base
 	
 	function __construct()
 	{
-		// parent::__construct();
-		header('Content-Type: text/html;charset=utf-8');
+		  // parent::__construct();
+		  header('Content-Type: text/html;charset=utf-8');
 	    header('Access-Control-Allow-Origin:*'); // *代表允许任何网址请求
 	    header('Access-Control-Allow-Methods:POST,GET,OPTIONS,DELETE'); // 允许请求的类型
 	    header('Access-Control-Allow-Credentials: true'); // 设置是否允许发送 cookies
@@ -49,15 +49,34 @@ class Index extends Base
 		return DataReturn(1, '请求成功', $data);
 	}
 
+    /**
+     * [articleHtml 文章的显示]
+     * @return [type] [description]
+     */
 	public function articleHtml(){
 		$article_id = input('get.arti');
+        // 文章信息
 		$data['html'] = ArticleModel::where('article_id',$article_id)
 					->where('article_is_del',2)
 					->where('article_is_state',1)
 					->field('article_id,article_title,article_nick,article_text,read_sum,click_sum,is_comment')
 					->find()
 					->toArray();
-
+        $data['upper'] = ArticleModel::where('article_id','<',$article_id)
+                                        ->where('article_is_del',2)
+                                        ->where('article_is_state',1)
+                                        ->field('article_id,article_title')
+                                        ->order('article_id desc')
+                                        ->limit(1)
+                                        ->find();
+        $data['down'] = ArticleModel::where('article_id','>',$article_id)
+                                        ->where('article_is_del',2)
+                                        ->where('article_is_state',1)
+                                        ->field('article_id,article_title')
+                                        ->limit(1)
+                                        ->find();
+        $data['upper'] = empty($data['upper']) ? ['article_id'=>'','article_title'=>'到顶了'] : $data['upper']->toArray();
+        $data['down'] = empty($data['down']) ? ['article_id'=>'','article_title'=>'到底啦'] : $data['down']->toArray();
 		$comment = Db::query('SELECT a.*,b.user_id AS target_user_id,c.user_nick,c.user_img FROM blog_comment a LEFT JOIN blog_comment b ON a.target_id = b.comment_id left JOIN blog_user c ON a.user_id = c.user_id where a.article_id = '.$article_id.' order by comment_id desc');
 		$data['comment'] = commentTree($comment);
 		$data['comment'] = commentBig($data['comment']);
@@ -162,8 +181,8 @@ class Index extends Base
         $map['region'] = $reload['data']['region'];
         $map['city'] = $reload['data']['city'];
         $info = explode (" ",$reload["info"]);
-        $map['source_phone'] = getOS();//$info[count($info)-1];
-        $map['source_safari'] = $info[count($info)-2];
+        $map['phone'] = getOS();//$info[count($info)-1];
+        $map['safari'] = $info[count($info)-2];
         Db('blog_userlogin_log')->insert($map); // 进行数据插入操作
     }
 
@@ -172,6 +191,7 @@ class Index extends Base
      * @return [type] [description]
      */
     public function sourceget(){
+      die;
         $param = Request()->param();
         if (empty($param['localhref'])) {
             return ['参数错误'];
@@ -215,8 +235,77 @@ class Index extends Base
         $map['cookie'] = input('get.cookie');
         $map['time'] = time();
         $map['ip'] = getIPInfo();
-        // Db('blog_uv')->insert($map);
+        Db('blog_uv')->insert($map);
     }
+
+
+/**
+ * [apilayim 测试]
+ * @return [type] [description]
+ */
+    public function apilayim(){
+        return [
+              "code" => 0 
+              ,"msg" => "" 
+              ,"data" => [
+              
+                "mine" =>  [
+                  "username" =>  "小小的成"
+                  ,"id" =>  "1010101" 
+                  ,"status" =>  "online" 
+                  ,"sign" =>  "热爱PHP"
+                  ,"avatar" => "http://www.kissapi.com/images/qq.png"
+                ]
+                
+                ,"friend" =>  [[
+                  "groupname" => "同事"
+                  ,"id" =>  1 
+                  ,"list" =>  [[ 
+                    "username" =>  "xx" 
+                    ,"id" =>  "100001" 
+                    ,"avatar" =>  "http://www.kissapi.com/images/qq.png" 
+                    ,"sign" =>  "123" 
+                    ,"status" =>  "online" 
+                  ],[ 
+                    "username" =>  "aa" 
+                    ,"id" =>  "100002" 
+                    ,"avatar" =>  "//tva4.sinaimg.cn/crop.0.1.1125.1125.180/475bb144jw8f9nwebnuhkj20v90vbwh9.jpg" 
+                    ,"sign" =>  "123" 
+                    ,"status" =>  "online" 
+                  ] ]
+                ]]
+                
+                ,"group" =>  [[
+                  "groupname" =>  "q"
+                  ,"id" =>  "101" 
+                  ,"avatar" =>  "a.jpg" 
+                ] ]
+              ]
+            ];
+    }
+
+    public function getMembers(){
+        return [
+              "code" =>  0 //0表示成功，其它表示失败
+              ,"msg" =>  "" //失败信息
+              ,"data" =>  [
+                "list" =>  [[
+                  "username" =>  "马小云" //群员昵称
+                  ,"id" =>  "168168" //群员id
+                  ,"avatar" =>  "http => //tp4.sinaimg.cn/2145291155/180/5601307179/1" //群员头像
+                  ,"sign" =>  "让天下没有难写的代码" //群员签名
+                ]]
+              ]
+            ]    ;  
+    }
+
+
+
+
+
+
+
+
 
     public function _empty(){
     	return ['很棒'];

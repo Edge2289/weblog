@@ -69,6 +69,7 @@
             },
             xAxis: {
                 type: 'category',
+                boundaryGap : false,
                 data: timeData
             },
             yAxis: {
@@ -76,7 +77,7 @@
             },
             series: [{
                 name:'用户量',
-                data: [820, 932, 901, 934, 1290, 1330, 1320],
+                data: JSON.parse("{$userData}"),
                 type: 'line',
                 smooth: true
             }]

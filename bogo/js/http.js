@@ -31,16 +31,17 @@ $(function(){
 			localStorage.setItem(a[0],a[1]);
 		}
 		localStorage.setItem('user_time',(new Date()).valueOf());
-		// $.get(sUrl+'api/index/userlogin',{'user_qq':sendData['user_qq']},function(data){
-
-		// })
+		$.get(sUrl+'api/index/userlogin',{'user_qq':sendData['user_qq']},function(){
+			var href = window.location.href;
+			h = href.split('?');
+			window.location.href = h[0];
+		})
 	}
 
 	// 获取首页分类标签
 	$.get(sUrl+'api/index/cateData',function(data){
 		var data = JSON.parse(data);
 		var html = '';
-		
 		if(!domain){
 			html += '<li class="fh5co-active"><a href="index.html">首页</a></li>';
 		}else{
@@ -56,7 +57,7 @@ $(function(){
 				html += '<li><a href="blog.html?bolg='+burl+'" data-cate_id="'+val['cate_id']+'">'+val['cate_name']+'</a></li>';
 			}
 		}); 
-			// html += '<li><a href="contact.html">留言</a></li>';
+			html += '<li><a href="portfolio.html">聊天系统（未完善）</a></li>';
 			$("#fh5co-main-menu").children("ul").append(html);
 	})
 	
@@ -172,6 +173,16 @@ function getLocalTime(nS) {
 				commentHtml += '		</div> ';
 			 })
 			 $('.comment-show').html(commentHtml);
+
+			 $('.upper').html("上一章："+data.data.upper.article_title);
+			 $('.down').html("下一章："+data.data.down.article_title);
+			 var href = window.location.href;
+				h = href.split('?');
+			 if (data.data.upper.article_id != '') {
+			 	$('.upper').attr('href',h[0]+'?arti='+data.data.upper.article_id);
+			 }if (data.data.down.article_id != '') {
+			 	$('.down').attr('href',h[0]+'?arti='+data.data.down.article_id);
+			 }
 		})
 
 	}
@@ -249,7 +260,6 @@ function getLocalTime(nS) {
 	
 		$.get(sUrl+'api/index/syslist',function(data){
 			var data = JSON.parse(data);
-			console.log(data);
 			data.data.forEach(function(e){
 				var obj = '.'+e.name;
 				$(obj).html(e.value);
