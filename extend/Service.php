@@ -102,10 +102,10 @@ class Service
 			'type' => 'friendStatus',
 			'opend' => $requestData['opend'],
 			'status' => "online",
-		]
+		];
 		foreach ($friendData as $key => $value) {
 			// 推送消息
-			$this->sendMessage($server, $value, $data)
+			$this->sendMessage($server, $value, $data);
 		}
 
 		// 获取离线消息
@@ -161,7 +161,7 @@ class Service
                         'to'     => $data['data']['to']['id'],
                         'content'       => $data['data']['mine']['content'],
                         'type' => 'friend',
-                        'sendTime'    => time()
+                        'sendTime'    => time(),
                         'status'     => 1,
                     ];
                     DB::table('blog_chat_chatlog')->insert($record_data);
@@ -189,7 +189,7 @@ class Service
 						if ($value['opend'] == $this->redisOpend) {
 							continue;
 						}
-						$this->sendMessage($server, $value['opend'], , ['emit'=>'chatMessage', 'data'=>$sendData], true);
+						$this->sendMessage($server, $value['opend'], ['emit'=>'chatMessage', 'data'=>$sendData], true);
 					}
 					// 做聊天记录
 					// mysql 保存
@@ -198,12 +198,12 @@ class Service
                         'to'     => $data['data']['to']['id'],
                         'content'       => $data['data']['mine']['content'],
                         'type' => 'group',
-                        'sendTime'    => time()
+                        'sendTime'    => time(),
                         'status'     => 1,
                     ];
                     DB::table('blog_chat_chatlog')->insert($record_data);
 				}
-				
+
 				break;
 			// 用户状态修改
 			case 'changStatus':
@@ -214,10 +214,10 @@ class Service
 					'type' => 'changStatus',
 					'opend' => $data['data']['opend'],
 					'status' => $data['data']['status'],
-				]
+				];
 				foreach ($friendData as $key => $value) {
 					// 推送消息
-					$this->sendMessage($server, $value, $data)
+					$this->sendMessage($server, $value, $data);
 				}
 				break;
 
