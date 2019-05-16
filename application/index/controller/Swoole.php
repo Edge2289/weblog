@@ -1,7 +1,7 @@
 <?php
 namespace app\index\controller;
 
-use think\swoole\Server;
+use \think\swoole\Server;
 
 /**
 *  swoole 服务类
