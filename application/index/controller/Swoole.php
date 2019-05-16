@@ -1,72 +1,80 @@
 <?php
 namespace app\index\controller;
 
-use \think\swoole\Server;
-
+use app\common\model\UserModel;
+use app\common\model\ChatMyGroupModel;
+use app\common\model\ChatGroupMember;
 /**
-*  swoole 服务类
+*  swoole ： 服务端
+*  name : 小小的成
 */
-class Swoole extends Server
+class Service
 {
-	
-	protected static $token;
-    protected $host = '127.0.0.1';
-    protected $port = 9508;
-    protected $serverType = 'socket';
-    protected static $uid = '';
-    protected $option = [
-        'worker_num' => 4, // 设置启动的Worker进程数
-        'daemonize' => false, //守护进程化。
-        'backlog' => 128, //Listen队列长度，
-        'dispatch_mode' => 2,
-        'heartbeat_check_interval' => 5,
-        'heartbeat_idle_time' => 100,
-    ];
+	const swoole_host = '0.0.0.0'; // swoole  服务器地址
+	const swoole_part = 7326; // 端口号
+	private $server = null;  // websocket 创建单例对象
+	private $connectList = []; // fd 的集合 用redis 来作为缓存
 
-     //建立连接时回调函数
-    public function onOpen($server,$req)
-    {
-        $fd = $req->fd;//客户端标识
-        $uid = $req->get['uid'];//客户端传递的用户id
-        $token = $req->get['token'];//客户端传递的用户登录token
-        
-        //省略token验证逻辑......
-        if (!$token) {
-            $arr = array('status'=>2,'message'=>'token已过期');
-            $server->push($fd, json_encode($arr));
-            $server->close($fd);
-            return;
-        }
-        //省略给用户绑定fd逻辑......
-        echo "用户{$uid}建立了连接,标识为{$fd}\n";
-    }
- 
-    //接收数据时回调函数
-    public function onMessage($server,$frame)
-    {
-        $fd = $frame->fd;
-        $message = $frame->data;
- 
-        //省略通过fd查询用户uid逻辑......
-        $uid = 666;
-        $data['uid'] = $uid;
-        $data['message'] = '用户'.$uid.'发送了:'.$message;
-        $data['post_time'] = date("m/d H:i",time());
-        $arr = array('status'=>1,'message'=>'success','data'=>$data);
- 
-        //仅推送给当前连接用户
-        //$server->push($fd, json_encode($arr));
-        
-        //推送给全部连接用户
-        foreach($server->connections as $fd) {
-            $server->push($fd, json_encode($arr));
-        } 
-    }
- 
-    //连接关闭时回调函数
-    public function onClose($server,$fd)
-    {
-        echo "标识{$fd}关闭了连接\n";
-    }
+	const redis_host = '127.0.0.1'; // redis  服务器地址
+	const redis_part = 6379; // 端口号
+	private $cli = null; // redis 的单例对象
 
+	// private $redisOpend = null; // 启用会使自己无法发送消息
+
+	public function __construct()
+	{
+		// 实例化swoole 单例
+		$this->server = new swoole_websocket_server(self::swoole_host, self::swoole_part);
+		// 实例化redis 单例
+		$this->cli = new Redis();
+		$this->cli->connect(self::redis_host, self::redis_part);
+		$this->cli->select(8);
+        //监听连接事件
+        $this->server->on('open', [$this, 'onOpen']);
+        //监听接收消息事件
+        $this->server->on('message', [$this, 'onMessage']);
+        //监听关闭事件
+        $this->server->on('close', [$this, 'onClose']);
+		//设置允许访问静态文件
+        // $this->server->set([
+        //     'document_root' => '/grx/swoole/public',//这里传入静态文件的目录
+        //     'enable_static_handler' => true//允许访问静态文件
+        // ]);
+        $this->server->start();
+	}
+
+	/**
+	 * [onOpen 链接开启时]
+	 * @param  [type] $server  [description]
+	 * @param  [type] $request [description]
+	 * @return [type]          [description]
+	 */
+	public function onOpen($server, $request){
+		// 这里做 swoole fd 于用户的opend 连接起来 
+		// 用redis 做保存
+		print_r($request);
+		dd(UserModel::where(1)->select());
+	}
+
+	/**
+	 * [onMessage 接收到消息]
+	 * @param  [type] $server  [description]
+	 * @param  [type] $request [description]
+	 * @return [type]          [description]
+	 */
+	public function onMessage($server, $request){
+
+	}
+
+	/**
+	 * [onClose 关闭连接]
+	 * @param  [type] $server [description]
+	 * @param  [type] $fd     [description]
+	 * @return [type]         [description]
+	 */
+	public function onClose($server, $fd){
+
+	}
 }
+$ser = new Service();
+?>
