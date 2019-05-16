@@ -77,11 +77,10 @@
 <!--      聊天系统       -->
 <script>
 // 初始化 服务类
-// const opend = localStorage.getItem('user_qq');
-// const token = localStorage.getItem('accesstoken');
-const wbSock = new WebSocket("ws://192.168.118.128:7326");
+const opend = localStorage.getItem('user_qq');
+const token = localStorage.getItem('accesstoken');
+const wbSock = new WebSocket("ws://192.168.118.129:7326");
 // const wbSock = new WebSocket("ws://120.79.65.240:7326?opend="+opend);
-
 wbSock.onerror = function(event){
 	console.log("服务器连接异常");
 }
