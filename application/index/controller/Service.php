@@ -1,5 +1,6 @@
 <?php
 
+use think\Db;
 use app\common\model\UserModel;
 use app\common\model\ChatMyGroupModel;
 use app\common\model\ChatGroupMember;
@@ -25,7 +26,7 @@ class Service
 		// 实例化swoole 单例
 		$this->server = new \swoole_websocket_server(self::swoole_host, self::swoole_part);
 		// 实例化redis 单例
-		$this->cli = new \Redis();
+		$this->cli = new Redis();
 		$this->cli->connect(self::redis_host, self::redis_part);
 		$this->cli->select(8);
         //监听连接事件
@@ -57,9 +58,11 @@ class Service
 			if ($offline_msg) {
 				$data = [
 					'opend' => $opend,
-					'data' => json_encode($data)
+					'data' => json_encode($data),
+					'status' => 0,
 				];
 				// 数据插入
+				Db('blog_chat_offline_message')->insert($data)
 			}
 			return false;
 		}
@@ -94,22 +97,31 @@ class Service
 			return ;
 		}
 		$this->cli->set('opend:'.$requestData['opend'], $request->fd);
+		$this->cli->set('fd:'.$request->fd, 'opend:'.$requestData['opend']);
 		// 更改mysql 的在线状态
 		// 获取用户的好友 发送在线状态
 		$friendData = ChatMyGroupModel::friendList($requestData['opend']);
 		// 前端数据更新
 		$data = [
-			'type' => 'friendStatus',
 			'opend' => $requestData['opend'],
 			'status' => "online",
 		];
 		foreach ($friendData as $key => $value) {
 			// 推送消息
-			$this->sendMessage($server, $value, $data);
+			$this->sendMessage($server, $value, ['emit'=>'friendStatus', 'data'=>$data]);
 		}
 
 		// 获取离线消息
-
+		$offData = Db('blog_chat_offline_message')
+						->where('opend',$requestData['opend'])
+						->where('status',0)
+						->select();
+		foreach ($offData as $ok => $ov) {
+			$i = $this->sendMessage($server, $requestData['opend'], ['emit'=>'chatMessage', 'data'=>json_decode($ov['data'], true)]);
+			if ($i) {
+				Db('blog_chat_offline_message')->where('offline_id',$ov['offline_id'])->update(['status',1]);
+			}
+		}
 	}
 
 	/**
@@ -124,7 +136,6 @@ class Service
 		 * 接收到的数据
 		 */
 		$data = json_decode($request->data, true);
-
 		/**
 		 *  判断接受的信息类型
 		 *  进行不同的处理
@@ -164,7 +175,8 @@ class Service
                         'sendTime'    => time(),
                         'status'     => 1,
                     ];
-                    DB::table('blog_chat_chatlog')->insert($record_data);
+                    $bcc = DB::table('blog_chat_chatlog')->insert($record_data);
+                    print_r("记录保存状态：".$bcc);
 
 				}else if ($data['data']['to']['type'] == 'group') {
 					// 群组的id 用户获取群的用户 来做发送信息
@@ -235,7 +247,24 @@ class Service
 	 * @return [type]         [description]
 	 */
 	public function onClose($server, $fd){
-
+		// 用户下线 把用户的fd 取消关联在redis 上面
+		$opend = $this->cli->get('fd:'.$fd);
+		// 删除
+		$this->cli->del('fd:'.$fd);
+		$this->cli->del('opend:'.$opend);
+		// 拆分open id 获取里面的opend 发送好友我下线消息 opend:2CB99992FE060C4B897B0E9419887AC8,
+		$opend_id = substr($opend ,5);
+		// 查询
+		$friendData = ChatMyGroupModel::friendList($opend_id);
+		// 前端数据更新
+		$data = [
+			'opend' => $opend_id,
+			'status' => "offline",
+		];
+		foreach ($friendData as $key => $value) {
+			// 推送消息
+			$this->sendMessage($server, $value, ['emit'=>'friendStatus', 'data'=>$data]);
+		}
 	}
 }
 $ser = new Service();

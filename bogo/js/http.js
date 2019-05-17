@@ -9,8 +9,10 @@ $(function(){
 
 	var outTime = (new Date()).valueOf();
 	var startTime = localStorage.getItem('user_time');
+
 	if ((outTime - startTime) > 1800000) {
-		localStorage.clear();
+		// 先取消登录不操作过时
+		// localStorage.clear();
 	}else{
 		localStorage.setItem('user_time',(new Date()).valueOf());
 	}
@@ -42,7 +44,10 @@ $(function(){
 	$.get(sUrl+'api/index/cateData',function(data){
 		var data = JSON.parse(data);
 		var html = '';
-		if(!domain){
+			var href = window.location.href;
+			h = href.split('/');
+
+		if(!domain && h[3] != 'portfolio.html'){
 			html += '<li class="fh5co-active"><a href="index.html">首页</a></li>';
 		}else{
 			html += '<li><a href="index.html">首页</a></li>';  //  class="fh5co-active"
@@ -57,8 +62,13 @@ $(function(){
 				html += '<li><a href="blog.html?bolg='+burl+'" data-cate_id="'+val['cate_id']+'">'+val['cate_name']+'</a></li>';
 			}
 		}); 
+		if (h[3] != 'portfolio.html') {
 			html += '<li><a href="portfolio.html">聊天系统（未完善）</a></li>';
-			$("#fh5co-main-menu").children("ul").append(html);
+		}else{
+
+			html += '<li class="fh5co-active"><a href="portfolio.html">聊天系统（未完善）</a></li>';
+		}
+		$("#fh5co-main-menu").children("ul").append(html);
 	})
 	
 	
@@ -328,6 +338,8 @@ function getLocalTime(nS) {
 	         document.cookie = key + "=v; expires =" +date.toGMTString();//设置cookie
 	    }
 	}
+
+	// 判断用户登录是否正常
 	var cookieItem = cookie.get('user_cookie');
 	if (!cookieItem) {
 		cookie.set('user_cookie',1131191695+"_"+(new Date()).valueOf());

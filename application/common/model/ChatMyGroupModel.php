@@ -35,7 +35,7 @@ class ChatMyGroupModel extends Model
 					$groupData[$gk]['list'][$fk]['id'] = $fv['opend'];
 					$groupData[$gk]['list'][$fk]['avatar'] = empty($fv["user"]['user_img'])?'//tva4.sinaimg.cn/crop.0.1.1125.1125.180/475bb144jw8f9nwebnuhkj20v90vbwh9.jpg':$fv["user"]['user_img'];
 					$groupData[$gk]['list'][$fk]['sign'] = $fv['nickName']."说： 我很快乐 !";
-					$groupData[$gk]['list'][$fk]['status'] = "online";
+					$groupData[$gk]['list'][$fk]['status'] = $fv["user"]['is_chat_status'];
 				}
 			}
 		}

@@ -61,6 +61,7 @@ class Chat
 			$groupData = ChatMyGroupModel::groupfriend($param['opend']);
 			// 查询加入了什么群
 			$groupmemberData = ChatGroupMember::group($param['opend']);
+			UserModel::where('user_qq',$param['opend'])->update(['is_chat_status' => 1]);
 		} catch (Exception $e) {
 			return $this->reData(0, $e->getMessage(),[]);
 		}
@@ -72,7 +73,7 @@ class Chat
                 "mine" =>  [
                   "username" =>  $userData["user_nick"]
                   ,"id" =>  $userData["user_qq"] 
-                  ,"status" =>  "online" 
+                  ,"status" =>  $userData["is_chat_status"] 
                   ,"sign" =>  $userData["user_nick"]."说: 热爱PHP！"
                   ,"avatar" => $userData["user_img"]
                 ]

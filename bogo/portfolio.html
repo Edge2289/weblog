@@ -40,6 +40,7 @@
 	<link rel="stylesheet" href="layui/layim.css" media="all">
 	<!-- Modernizr JS -->
 	<script src="js/modernizr-2.6.2.min.js"></script>
+	<script src="js/jquery-1.12.0.min.js"></script>
 	<script src="layui/layui.js"></script>
 	<!-- FOR IE9 below -->
 	<!--[if lt IE 9]>
@@ -74,12 +75,23 @@
 			</div>
 
 		</aside>
+<script>
+
+$(function(){
+	if (localStorage.getItem('user_qq') == null || localStorage.getItem('access_token') == null) {
+		// alert('请先登录');
+		console.log("未登录");
+	}
+})
+</script>
+
 <!--      聊天系统       -->
 <script>
-// 初始化 服务类
+
 const opend = localStorage.getItem('user_qq');
-const token = localStorage.getItem('accesstoken');
-const wbSock = new WebSocket("ws://192.168.118.129:7326");
+const token = localStorage.getItem('access_token');
+// 初始化 服务类
+const wbSock = new WebSocket("ws://192.168.118.129:7326?opend="+opend);
 // const wbSock = new WebSocket("ws://120.79.65.240:7326?opend="+opend);
 wbSock.onerror = function(event){
 	console.log("服务器连接异常");
@@ -169,6 +181,7 @@ layui.use('layim', function(){
 wbSock.onmessage = function(res){
 // 	res = JSON.paran(res);  
 	resData = JSON.parse(res.data);
+	console.log(res);
 // 	// 判断是那种类型的信息
 	switch(resData['emit']){
 		// 信息的发送  包括个人  以及组
@@ -178,8 +191,7 @@ wbSock.onmessage = function(res){
 
 		case 'changStatus':
 				// 用户的状态切换
-				
-      		// layim.setFriendStatus(168168, 'online');  更新用户状态
+      		layim.setFriendStatus(resData['data']['opend'], resData['data']['status']);  //更新用户状态
 			break;
 		default :
 				// 错误返回
