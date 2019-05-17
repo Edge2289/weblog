@@ -202,7 +202,7 @@ class Service
                         'timestamp' => time()*1000 //服务端时间戳毫秒数
 					];
 					foreach ($groupData as $key => $value) {
-						if ($value['opend'] == $this->redisOpend) {
+						if ($value['opend'] == $data['data']['to']['id']) {
 							continue;
 						}
 						$this->sendMessage($server, $value['opend'], ['emit'=>'chatMessage', 'data'=>$sendData], true);
