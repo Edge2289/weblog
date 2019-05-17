@@ -62,7 +62,7 @@ class Service
 					'status' => 0,
 				];
 				// 数据插入
-				Db('blog_chat_offline_message')->insert($data)
+				Db('blog_chat_offline_message')->insert($data);
 			}
 			return false;
 		}
