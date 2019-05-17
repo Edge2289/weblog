@@ -253,11 +253,11 @@ class Service
 	public function onClose($server, $fd){
 		// 用户下线 把用户的fd 取消关联在redis 上面
 		$opend = $this->cli->get('fd:'.$fd);
-		// 删除
-		$this->cli->del('fd:'.$fd);
-		$this->cli->del('opend:'.$opend);
 		// 拆分open id 获取里面的opend 发送好友我下线消息 opend:2CB99992FE060C4B897B0E9419887AC8,
 		$opend_id = substr($opend ,6);
+		// 删除
+		$this->cli->del('fd:'.$fd);
+		$this->cli->del('opend:'.$opend_id);
 		// 查询
 		$friendData = ChatMyGroupModel::friendList($opend_id);
 		// 前端数据更新
