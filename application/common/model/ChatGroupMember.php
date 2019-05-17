@@ -28,4 +28,17 @@ class ChatGroupMember extends Model
 		}
 		return $groupData;
 	}
+
+	public function userImg(){
+		return $this->hasOne('UserModel','user_qq','opend')->field('user_qq,user_img');
+	}
+
+	public static function groupData($Idx){
+		return self::with('userImg')
+						->where('groupIdx', $Idx)
+						->field('groupMemberIdx,nickName,opend')
+						->select()
+						->toArray();
+	}
+
 }

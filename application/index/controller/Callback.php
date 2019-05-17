@@ -52,6 +52,15 @@ class Callback extends Controller
                 $map['register_time'] = time();
                 $map['is_comment'] = 1;
                 Db('blog_user')->insert($map);
+                Db('blog_chat_group_member')->insert([
+                        'groupIdx' => 1,
+                        'opend' => $openid,
+                        'status' => 1,
+                        'addTime' => time(),
+                        'type' => 3, // 用户
+                        'gagTime' => 0,
+                        'nickName' => $userinfo["nickname"],
+                    ]);
             }
             $is_comment = empty($findId) ? 1 : $findId['is_comment'];
             // 重定向回去前端

@@ -139,6 +139,8 @@ layui.use('layim', function(){
       url: sUrl+'api/chat/chatFile' //（返回的数据格式见下文）
       ,type: 'post' //默认post
     }
+
+    ,chatLog: layui.cache.dir + 'css/modules/layim/html/chatlog.html' 
     // ,isAudio: true //开启聊天工具栏音频
     // ,isVideo: true //开启聊天工具栏视频
     
@@ -155,9 +157,9 @@ layui.use('layim', function(){
     ,notice: true //是否开启桌面消息提醒，默认false
     ,voice: false //声音提醒，默认开启，声音文件为：default.mp3
     
-    ,msgbox: '/layim/demo/msgbox.html' //消息盒子页面地址，若不开启，剔除该项即可
-    // ,find: '/layim/demo/find.html' //发现页面地址，若不开启，剔除该项即可
-    // ,chatLog: '/layim/demo/chatlog.html' //聊天记录页面地址，若不开启，剔除该项即可
+    // ,msgbox: '/layim/demo/msgbox.html' //消息盒子页面地址，若不开启，剔除该项即可
+    ,msgbox: layui.cache.dir + 'css/modules/layim/html/msgbox.html' //消息盒子页面地址，若不开启，剔除该项即可
+    ,find: layui.cache.dir + '/layim/demo/find.html' //发现页面地址，若不开启，剔除该项即可
     
   });
   //监听在线状态的切换事件
@@ -185,6 +187,11 @@ layui.use('layim', function(){
 	    ,data: res
 	  })); 
 })
+
+  layim.on('chatlog',function(data, url){
+  	console.log(data);
+  	console.log(url);
+  })
 
 /**
  *  监听收到的聊天信息

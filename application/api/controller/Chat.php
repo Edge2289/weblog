@@ -125,11 +125,11 @@ class Chat
             	]; 
         }else{
             // 上传失败获取错误信息
-            return json_encode([
+            return [
             			'code'  => 1,
-            			'msg'  => $file->getError(),
+            			'msg'  => $file["file"]->getError(),
             			'data'  => []
-            	]); 
+            	];
         }
 	}
 
@@ -147,6 +147,44 @@ class Chat
 
 	public function chatFile(){
 
+	}
+
+
+
+	/**
+	 *  查看群成员
+	 *  {
+  "code": 0 //0表示成功，其它表示失败
+  ,"msg": "" //失败信息
+  ,"data": {
+    "list": [{
+      "username": "马小云" //群员昵称
+      ,"id": "168168" //群员id
+      ,"avatar": "http://tp4.sinaimg.cn/2145291155/180/5601307179/1" //群员头像
+      ,"sign": "让天下没有难写的代码" //群员签名
+    }, …… ]
+  }
+}      
+	 */
+
+	public function getMembers(){
+		$data = $this->request->param();
+		// group_id
+		$groupData = ChatGroupMember::groupData($data['id']);
+		$gData = [];
+		foreach ($groupData as $gdk => $gdv) {
+			$gData[$gdk]['username'] = $gdv['nickName'];
+			$gData[$gdk]['id'] = $gdv['groupMemberIdx'];
+			$gData[$gdk]['sign'] = "PHP 是世界上最好的语言";
+			$gData[$gdk]['avatar'] = $gdv['user_img']['user_img'];
+		}
+		return [
+            		'code'  => 0,
+            		'msg'  => '',
+            		'data'  => [
+            			'list' => $gData
+            		],
+            	];
 	}
 
 	/**
