@@ -91,8 +91,20 @@ $(function(){
 const opend = localStorage.getItem('user_qq');
 const token = localStorage.getItem('access_token');
 // 初始化 服务类
-const wbSock = new WebSocket("ws://192.168.118.129:7326?opend="+opend);
+var wbSock = new WebSocket("ws://192.168.118.129:7326?opend="+opend);
 // const wbSock = new WebSocket("ws://120.79.65.240:7326?opend="+opend);
+wbSock.onclose = function(wvent){
+	console.log('close');
+}
+console.log(wbSock.readyState);
+ window.onbeforeunload = function () {
+       wbSock.close();
+   }
+if (wbSock.readyState == 0) {
+	wbSock.close();
+	wbSock = new WebSocket("ws://192.168.118.129:7326?opend="+opend);
+}
+console.log(wbSock.readyState);
 wbSock.onerror = function(event){
 	console.log("服务器连接异常");
 }
@@ -119,13 +131,13 @@ layui.use('layim', function(){
     
     // 上传图片
     ,uploadImage: {
-      url: '' //（返回的数据格式见下文）
-      ,type: '' //默认post
+      url: sUrl+'api/chat/chatImg' //（返回的数据格式见下文）
+      ,type: 'post' //默认post
     }
     // 上传文件
     ,uploadFile: {
-      url: '' //（返回的数据格式见下文）
-      ,type: '' //默认post
+      url: sUrl+'api/chat/chatFile' //（返回的数据格式见下文）
+      ,type: 'post' //默认post
     }
     // ,isAudio: true //开启聊天工具栏音频
     // ,isVideo: true //开启聊天工具栏视频
@@ -205,6 +217,10 @@ wbSock.onmessage = function(res){
 	    type: 'ping' //随便定义，用于在服务端区分消息类型
 	    ,data: {}
 	  }));
+		console.log("ping!")
+            // setTimeout(function(){//如果超过一定时间还没重置，说明后端主动断开了
+            //     wbSock.close();     //如果onclose会执行reconnect，我们执行ws.close()就行了.如果直接执行reconnect 会触发onclose导致重连两次
+            // }, 12000)
 	},12000)
 
 });

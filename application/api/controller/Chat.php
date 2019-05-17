@@ -91,6 +91,65 @@ class Chat
 	}
 
 	/**
+	 *  上传图片
+	 *      {
+	      "code": 0 //0表示成功，其它表示失败
+	      ,"msg": "" //失败信息
+	      ,"data": {
+	        "src": "http://cdn.xxx.com/upload/images/a.jpg" //图片url
+	      }
+    }      
+          
+	 */
+
+	public function chatImg(){
+		if (!$this->request->isPost()) {
+			$this->reData(0,404,[]);die;
+		}
+		$file = request()->file();
+		if (!$file) {
+			$this->reData(0,404,[]);die;
+		}
+
+		$roth = ROOT_PATH . 'public' . DS . 'static'. DS . 'img'. DS . 'chat';
+		$info = $file["file"]->move($roth);
+		if($info){
+            // 成功上传后 获取上传信息
+            $src = '\public' . DS . 'static'. DS . 'img'. DS . 'chat'. DS .date("Ymd"). DS .$info->getFilename();
+            return [
+            			'code' => 0,
+            			'msg'  => 'success',
+            			'data'  => [
+            				'src'  => $src,
+            			],
+            	]; 
+        }else{
+            // 上传失败获取错误信息
+            return json_encode([
+            			'code'  => 1,
+            			'msg'  => $file->getError(),
+            			'data'  => []
+            	]); 
+        }
+	}
+
+	/**
+	 *  上传文件
+	 *  {
+		  "code": 0 //0表示成功，其它表示失败
+		  ,"msg": "" //失败信息
+		  ,"data": {
+		    "src": "http://cdn.xxx.com/upload/file/LayIM.zip" //文件url
+		    ,"name": "LayIM.zip" //文件名
+		  }
+		}      
+	 */
+
+	public function chatFile(){
+
+	}
+
+	/**
 	 * [reData 返回数据]
 	 * @param  integer $code [状态]
 	 * @param  string  $msg  [信息]
