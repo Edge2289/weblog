@@ -184,7 +184,7 @@ class Service
 
 				}else if ($data['data']['to']['type'] == 'group') {
 					// 群组的id 用户获取群的用户 来做发送信息
-					$groupId = $data->data->to->id;
+					$groupId = $data['data']['to']['id'];
 					$groupData = ChatGroupMember::where('groupIdx',$groupId)
 									->where('status',1)
 									->field('opend')
