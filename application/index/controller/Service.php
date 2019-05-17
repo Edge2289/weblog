@@ -193,7 +193,7 @@ class Service
 					$sendData = [
                         'username' => $data['data']['mine']['username'],//消息来源用户名
                         'avatar' => $data['data']['mine']['avatar'],//消息来源用户头像
-                        'id' => $data['data']['mine']['id'],  //消息的来源ID（如果是私聊，则是用户id，如果是群聊，则是群组id）
+                        'id' => $data['data']['to']['id'],  //消息的来源ID（如果是私聊，则是用户id，如果是群聊，则是群组id）
                         'type' => $data['data']['to']['type'],  //聊天窗口来源类型，从发送消息传递的to里面获取
                         'content' => $data['data']['mine']['content'],  //消息内容
                         'cid' => 0,  //消息id，可不传。除非你要对消息进行一些操作（如撤回）
@@ -202,7 +202,7 @@ class Service
                         'timestamp' => time()*1000 //服务端时间戳毫秒数
 					];
 					foreach ($groupData as $key => $value) {
-						if ($value['opend'] == $data['data']['to']['id']) {
+						if ($value['opend'] == $data['data']['mine']['id']) {
 							continue;
 						}
 						$this->sendMessage($server, $value['opend'], ['emit'=>'chatMessage', 'data'=>$sendData], true);
