@@ -117,7 +117,7 @@ class Service
 						->where('status',0)
 						->select();
 		foreach ($offData as $ok => $ov) {
-			$i = $this->sendMessage($server, $requestData['opend'], ['emit'=>'chatMessage', 'data'=>json_decode($ov['data'], true)]);
+			$i = $this->sendMessage($server, $requestData['opend'], json_decode($ov['data'], true));
 			if ($i) {
 				Db('blog_chat_offline_message')->where('offline_id',$ov['offline_id'])->update(['status',1]);
 			}

@@ -46,6 +46,7 @@ class ChatMyGroupModel extends Model
 		// 2CB99992FE060C4B897B0E9419887AC8
 		$data = self::with(['friend','friend.user'])
 					->where('opend', $opend)
+					->where('is_chat_status', 1)
 					->order('weight asc')
 					->select()
 					->toArray();

@@ -181,7 +181,7 @@ layui.use('layim', function(){
 wbSock.onmessage = function(res){
 // 	res = JSON.paran(res);  
 	resData = JSON.parse(res.data);
-	console.log(res);
+	console.log(resData);
 // 	// 判断是那种类型的信息
 	switch(resData['emit']){
 		// 信息的发送  包括个人  以及组
@@ -198,6 +198,15 @@ wbSock.onmessage = function(res){
 			break;
 	}
 }
+
+	// 心跳
+	var love = setInterval(function(){
+		wbSock.send(JSON.stringify({
+	    type: 'ping' //随便定义，用于在服务端区分消息类型
+	    ,data: {}
+	  }));
+		console.log('心跳');
+	},12000)
 
 });
 </script>
