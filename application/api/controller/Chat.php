@@ -87,7 +87,7 @@ class Chat
 
 
 	public function ceshi(){
-		ChatMyGroupModel::friendList('2CB99992FE060C4B897B0E9419887AC8');
+		dd(ChatMyGroupModel::friendList('2CB99992FE060C4B897B0E9419887AC8'));
 	}
 
 	/**

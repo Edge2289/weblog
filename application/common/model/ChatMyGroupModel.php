@@ -46,7 +46,6 @@ class ChatMyGroupModel extends Model
 		// 2CB99992FE060C4B897B0E9419887AC8
 		$data = self::with(['friend','friend.user'])
 					->where('opend', $opend)
-					->where('is_chat_status', 1)
 					->order('weight asc')
 					->select()
 					->toArray();
@@ -56,7 +55,9 @@ class ChatMyGroupModel extends Model
 			
 			if (!empty($gv['friend'])) {
 				foreach ($gv['friend'] as $fk => $fv) {
-					$groupData[] = $fv['opend'];
+					if ($fv['user']['is_chat_status'] == 'online') {
+						$groupData[] = $fv['opend'];
+					}
 				}
 			}
 		}
