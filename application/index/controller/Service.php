@@ -253,7 +253,7 @@ class Service
 		$this->cli->del('fd:'.$fd);
 		$this->cli->del('opend:'.$opend);
 		// 拆分open id 获取里面的opend 发送好友我下线消息 opend:2CB99992FE060C4B897B0E9419887AC8,
-		$opend_id = substr($opend ,5);
+		$opend_id = substr($opend ,6);
 		// 查询
 		$friendData = ChatMyGroupModel::friendList($opend_id);
 		// 前端数据更新
@@ -265,6 +265,7 @@ class Service
 			// 推送消息
 			$this->sendMessage($server, $value, ['emit'=>'friendStatus', 'data'=>$data]);
 		}
+		Db('blog_user')->where('user_qq',$opend_id)->update(['is_chat_status' => 0]);
 	}
 }
 $ser = new Service();
