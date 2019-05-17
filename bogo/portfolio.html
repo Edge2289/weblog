@@ -189,7 +189,7 @@ wbSock.onmessage = function(res){
 				 layim.getMessage(resData['data']); 
 			break;
 
-		case 'changStatus':
+		case 'friendStatus':
 				// 用户的状态切换
       		layim.setFriendStatus(resData['data']['opend'], resData['data']['status']);  //更新用户状态
 			break;
@@ -205,7 +205,6 @@ wbSock.onmessage = function(res){
 	    type: 'ping' //随便定义，用于在服务端区分消息类型
 	    ,data: {}
 	  }));
-		console.log('心跳');
 	},12000)
 
 });

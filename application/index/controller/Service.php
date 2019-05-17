@@ -29,6 +29,8 @@ class Service
 		$this->cli = new Redis();
 		$this->cli->connect(self::redis_host, self::redis_part);
 		$this->cli->select(8);
+		// 清楚全部的fd
+		$this->cli->flushdb();
         //监听连接事件
         $this->server->on('open', [$this, 'onOpen']);
         //监听接收消息事件
@@ -118,9 +120,10 @@ class Service
 						->select();
 		foreach ($offData as $ok => $ov) {
 			$i = $this->sendMessage($server, $requestData['opend'], json_decode($ov['data'], true));
-			if ($i) {
+			// if ($i) {
+				// 不管是否推送成功  都将离线数据写入读取状态
 				Db('blog_chat_offline_message')->where('offline_id',$ov['offline_id'])->update(['status',1]);
-			}
+			// }
 		}
 	}
 
@@ -181,39 +184,39 @@ class Service
 				}else if ($data['data']['to']['type'] == 'group') {
 					// 群组的id 用户获取群的用户 来做发送信息
 					$groupId = $data->data->to->id;
-					$groupData = ChatGroupMember::where('groupIdx',$groupId)
-									->where('status',1)
-									->field('opend')
-									->select();
-					// 定义发送的信息
-					$sendData = [
-                        'username' => $data['data']['mine']['username'],//消息来源用户名
-                        'avatar' => $data['data']['mine']['avatar'],//消息来源用户头像
-                        'id' => $data['data']['mine']['id'],  //消息的来源ID（如果是私聊，则是用户id，如果是群聊，则是群组id）
-                        'type' => $data['data']['to']['type'],  //聊天窗口来源类型，从发送消息传递的to里面获取
-                        'content' => $data['data']['mine']['content'],  //消息内容
-                        'cid' => 0,  //消息id，可不传。除非你要对消息进行一些操作（如撤回）
-                        'mine'=> false,//要通过判断是否是我自己发的
-                        'fromid' => $data['data']['mine']['id'],  //消息的发送者id（比如群组中的某个消息发送者），可用于自动解决浏览器多窗口时的一些问题
-                        'timestamp' => time()*1000 //服务端时间戳毫秒数
-					];
-					foreach ($groupData as $key => $value) {
-						if ($value['opend'] == $this->redisOpend) {
-							continue;
-						}
-						$this->sendMessage($server, $value['opend'], ['emit'=>'chatMessage', 'data'=>$sendData], true);
-					}
-					// 做聊天记录
-					// mysql 保存
-                    $record_data = [
-                        'from'       => $data['data']['mine']['id'],
-                        'to'     => $data['data']['to']['id'],
-                        'content'       => $data['data']['mine']['content'],
-                        'type' => 'group',
-                        'sendTime'    => time(),
-                        'status'     => 1,
-                    ];
-                    DB::table('blog_chat_chatlog')->insert($record_data);
+					// $groupData = ChatGroupMember::where('groupIdx',$groupId)
+					// 				->where('status',1)
+					// 				->field('opend')
+					// 				->select();
+					// // 定义发送的信息
+					// $sendData = [
+     //                    'username' => $data['data']['mine']['username'],//消息来源用户名
+     //                    'avatar' => $data['data']['mine']['avatar'],//消息来源用户头像
+     //                    'id' => $data['data']['mine']['id'],  //消息的来源ID（如果是私聊，则是用户id，如果是群聊，则是群组id）
+     //                    'type' => $data['data']['to']['type'],  //聊天窗口来源类型，从发送消息传递的to里面获取
+     //                    'content' => $data['data']['mine']['content'],  //消息内容
+     //                    'cid' => 0,  //消息id，可不传。除非你要对消息进行一些操作（如撤回）
+     //                    'mine'=> false,//要通过判断是否是我自己发的
+     //                    'fromid' => $data['data']['mine']['id'],  //消息的发送者id（比如群组中的某个消息发送者），可用于自动解决浏览器多窗口时的一些问题
+     //                    'timestamp' => time()*1000 //服务端时间戳毫秒数
+					// ];
+					// foreach ($groupData as $key => $value) {
+					// 	if ($value['opend'] == $this->redisOpend) {
+					// 		continue;
+					// 	}
+					// 	$this->sendMessage($server, $value['opend'], ['emit'=>'chatMessage', 'data'=>$sendData], true);
+					// }
+					// // 做聊天记录
+					// // mysql 保存
+     //                $record_data = [
+     //                    'from'       => $data['data']['mine']['id'],
+     //                    'to'     => $data['data']['to']['id'],
+     //                    'content'       => $data['data']['mine']['content'],
+     //                    'type' => 'group',
+     //                    'sendTime'    => time(),
+     //                    'status'     => 1,
+     //                ];
+     //                DB::table('blog_chat_chatlog')->insert($record_data);
 				}
 
 				break;
