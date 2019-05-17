@@ -125,7 +125,7 @@ class Service
 				Db('blog_chat_offline_message')->where('offline_id',$ov['offline_id'])->update(['status'=>1]);
 			// }
 		}
-		Db('blog_user')->where('user_qq',$requestData['opend'])->update(['is_chat_status' => 0]);
+		Db('blog_user')->where('user_qq',$requestData['opend'])->update(['is_chat_status' => 1]);
 	}
 
 	/**
@@ -265,11 +265,11 @@ class Service
 			'opend' => $opend_id,
 			'status' => "offline",
 		];
+		Db('blog_user')->where('user_qq',$opend_id)->update(['is_chat_status' => 0]);
 		foreach ($friendData as $key => $value) {
 			// 推送消息
 			$this->sendMessage($server, $value, ['emit'=>'friendStatus', 'data'=>$data]);
 		}
-		Db('blog_user')->where('user_qq',$opend_id)->update(['is_chat_status' => 0]);
 	}
 }
 $ser = new Service();
