@@ -1,0 +1,213 @@
+
+<script src="../../js/jquery-1.12.0.min.js"></script>
+<script src="../layui.js"></script>
+<link rel="stylesheet" href="../css/layui.css" media="all">
+<link rel="stylesheet" href="../layim.css" media="all">
+<style type="text/css">
+	.layui-find-list li img {
+	    position: absolute;
+	    left: 15px;
+	    top: 8px;
+	    width: 36px;
+	    height: 36px;
+	    border-radius: 100%;
+	}
+	.layui-find-list li {
+	    position: relative;
+	    height: 90px;;
+	    padding: 5px 15px 5px 60px;
+	    font-size: 0;
+	    cursor: pointer;
+	}
+	.layui-find-list li * {
+	    display: inline-block;
+	    vertical-align: top;
+	    font-size: 14px;
+		overflow: hidden; 
+		text-overflow:ellipsis; 
+		white-space: nowrap;
+	}
+	.layui-find-list li span {
+	    margin-top: 4px;
+	    max-width: 155px;
+	}
+
+	.layui-find-list li p {
+	    display: block;
+	    line-height: 18px;
+	    font-size: 12px;
+	    color: #999;
+		overflow: hidden; 
+		text-overflow:ellipsis; 
+		white-space: nowrap;
+	}
+	.back{
+		cursor:pointer;
+	}
+	.lay_page{position: fixed;bottom: 0;margin-left: -15px;margin-bottom: 20px;background: #fff;width: 100%;}
+	.layui-laypage{width: 105px;margin:0 auto;display: block}
+</style>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+<br>
+<div class="layui-form"> 
+	<div class="layui-container" style="padding:0">
+		<div class="layui-row layui-col-space3">
+		    <div class="layui-col-xs7 mt15">
+		      <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder=" 昵称/编号" class="layui-input">
+		    </div>
+		    <div class="layui-col-xs1 mt15">
+		      <button class="layui-btn btncolor find">查找</button> 
+		    </div>     
+
+			<div class="layui-col-xs3 mt15">
+				<input type="radio" name="type" value="friend" title="找人" checked="">
+				<input type="radio" name="type" value="group" title="找群">
+				<button class="layui-btn layui-btn-xs btncolor createGroup">我要建群</button>		
+			 </div>
+		</div>  
+		<div id="lay_view" class="tjdata"> 
+			<fieldset class="layui-elem-field layui-field-title"> 
+			<legend class="legen">推荐好友</legend> 
+			</fieldset> 
+			<div class="layui-row tjhtml">   
+				<!-- <div class="layui-col-xs3 layui-find-list"> 
+					<li layim-event="add" data-type="friend" data-index="0" data-uid="910992" data-name="admin名字"> 
+						<img src="http://test.guoshanchina.com/uploads/person/910992.jpg">
+							 <span>admin名字(910992)</span> 
+							 <p>911088  </p>
+							 <button class="layui-btn layui-btn-xs btncolor add" data-type="friend"><i class="layui-icon"></i>加好友</button> 
+					</li> 
+				</div>  --> 
+			</div>
+
+
+        <!-- 分页 -->
+		<div class="lay_page" id="LAY_page"></div>		  
+	</div>
+	<div id="lay_view" class="fgdata" style="display: none;"> 
+			<fieldset class="layui-elem-field layui-field-title"> 
+			<legend><a class="back" onclick="return false;"><i class="layui-icon">返回</i></a> 查询结果</legend> 
+			</fieldset> 
+			<div class="layui-row fghtml">   
+			</div>
+
+
+        <!-- 分页 -->
+	<div class="lay_page" id="LAY_page"></div>		  
+	</div>
+</div>
+
+	<script src="../../js/http.js"></script>
+	<script src="../../js/swoole.js"></script>
+<script>
+    layui.use('form', function(){
+
+        var form = layui.form;
+        form.render();
+
+        $(".find").click(function(){
+        	$(".tjdata").show();
+        	var fgId = $("input[name='title']").val();
+        	if (fgId == '' || fgId == null) {
+        		layer.msg('请输入编号 或者 昵称');
+        		return false;
+        	}
+        	var type = $("input[name='type']:checked").val();
+        	// 请求Ajax 获取好友
+        	$.ajax({
+        		'type' : 'post',
+        		'url'  : sUrl+'api/chat/findfriendtotal',
+        		'data' : {'type':type,'id' : fgId,'token':token,'opend':opend},
+        		'dataType' : 'json',
+        		success:function(data){
+        			var data = JSON.parse(data);
+        			var fgHtml = '';
+        			if (data['data'].length == 0) {
+	        			$(".tjData").hide();
+	        			$(".fgData").show();
+        				$('.fghtml').html("暂无此人");
+        				return false;
+        			}
+        			for (var i = 0; i < data['data'].length; i++) {
+        				fgHtml += '<div class="layui-col-xs3 layui-find-list"> ';
+						fgHtml += '<li layim-event="add" data-type="friend" data-index="0" data-img="'+data["data"][i]["img"]+'" data-name="'+data["data"][i]["name"]+'" data-uid="'+data["data"][i]["id"]+'"> ';
+						fgHtml += '<img src="'+data["data"][i]["img"]+'">';
+						fgHtml += '	 <span>'+data["data"][i]["name"]+'</span> ';
+						fgHtml += '	 <p>'+data["data"][i]["text"]+'</p>';
+						fgHtml += '	 <button class="layui-btn layui-btn-xs btncolor add" data-type="friend"><i class="layui-icon"></i>加好友</button> ';
+						fgHtml += '</li> ';
+						fgHtml += '</div> ';
+        			}
+	        			$(".tjData").hide();
+	        			$(".fgData").show();
+        			$('.fghtml').html(fgHtml);
+        		},
+        		error:function(){
+        			layer.msg('请刷新页面重试');
+        		}
+        	})
+        })
+        // 查询结果返回显示上一页
+        $(".back").click(function(){
+	        $(".tjData").show();
+	        $(".fgData").hide();
+        })
+        $(".createGroup").click(function(){
+        	layer.open({
+        		type : 2,
+        		title : '创建群',
+        		area: ['460px', '350px'],
+        		content : "createGroup.html",
+        		fixed : false,
+        		resize : false,
+        	})
+        })
+
+$('body').on('click', '.add', function () {//添加好友
+        var othis = $(this), 
+        type = othis.data('type');
+        addFriendGroup(othis,type);
+        // type == 'friend' ? parent.layui.im.addFriend(othis,type) : parent.layui.im.addGroup(othis);        
+    });
+	
+	function addFriendGroup(othis,type){
+			var groupList = '';
+			$.ajaxSettings.async = false;
+			$.get(sUrl+'api/chat/grouplist',{'opend':opend,'token':token},function(data){
+				data.forEach(function(v,k){
+					groupList += '<option value="'+v['mygroupIdx']+'">'+v['mygroupName']+'</option>';
+				})
+			})
+            var li = othis.parents('li') || othis.parent()
+                    , uid = li.data('uid') || li.data('id')
+                    , img = li.data('img')
+                    , name = li.data('name');
+                    if (uid == '' || uid == null) {
+                    	layer.msg("错误提交");
+                    	return false;
+                    }
+		            layer.open({//弹出添加好友对话框
+		                isAdd: false
+		                ,img: img
+		                ,username: name || []
+		                ,uid:uid
+		                ,type: 1
+		        		,area: ['460px', '300px']
+		        		,btn: ['发送申请', '取消']
+		                ,content: '<div id="" class="layui-layer-content"><div class="layim-add-box"><div class="layim-add-img"><img class="layui-circle" src="'+img+'"><p>'+name+'</p></div><div class="layim-add-remark"><select class="layui-select layimGroup" id="LAY_layimGroup">'+groupList+'</select><textarea id="LAY_layimRemark" placeholder="验证信息" class="layui-textarea postscript"></textarea></div></div></div>'
+		                ,yes: function(){//确认发送添加请求
+		                	var groupid = $('.layimGroup option:selected').val();
+		                	var postscript = $('.postscript').val();
+		                    $.post(sUrl+'api/chat/addrequest',{'opend':opend,'token':token,'groupid':groupid,'postscript':postscript},function(data){
+								var data = JSON.parse(data);
+								console.log(data);
+							})
+
+		                },function(){
+		                    layer.close(index);
+		                }
+		            });            
+        }
+
+});
+</script>

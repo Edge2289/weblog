@@ -32,11 +32,12 @@ $(function(){
 			sendData[a[0]] = a[1];
 			localStorage.setItem(a[0],a[1]);
 		}
+
 		localStorage.setItem('user_time',(new Date()).valueOf());
 		$.get(sUrl+'api/index/userlogin',{'user_qq':sendData['user_qq']},function(){
 			var href = window.location.href;
 			h = href.split('?');
-			window.location.href = h[0];
+			// window.location.href = h[0];
 		})
 	}
 
@@ -86,7 +87,6 @@ $(function(){
 		$("#cateName").html(domain);
 		blog(domain);
 	}
-
 
 	// 根据分类获取信息
 	function blog(type){

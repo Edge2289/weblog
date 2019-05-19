@@ -75,41 +75,27 @@
 			</div>
 
 		</aside>
-<script>
-
-$(function(){
-	if (localStorage.getItem('user_qq') == null || localStorage.getItem('access_token') == null) {
-		// alert('请先登录');
-		console.log("未登录");
-	}
-})
-</script>
-
+		
+	<!-- jQuery -->
+	<script src="js/jquery.min.js"></script>
+	<!-- MAIN JS -->
+	<script src="js/http.js"></script>
 <!--      聊天系统       -->
-<script>
+	<script src="js/swoole.js"></script>
+	<script>
 
-const opend = localStorage.getItem('user_qq');
-const token = localStorage.getItem('access_token');
-// 初始化 服务类
-var wbSock = new WebSocket("ws://192.168.118.129:7326?opend="+opend);
-// const wbSock = new WebSocket("ws://120.79.65.240:7326?opend="+opend);
-wbSock.onclose = function(wvent){
-	console.log('close');
-}
-console.log(wbSock.readyState);
- window.onbeforeunload = function () {
-       wbSock.close();
-   }
-if (wbSock.readyState == 0) {
-	wbSock.close();
-	wbSock = new WebSocket("ws://192.168.118.129:7326?opend="+opend);
-}
-console.log(wbSock.readyState);
-wbSock.onerror = function(event){
-	console.log("服务器连接异常");
-}
+	$(function(){
+		if (localStorage.getItem('user_qq') == null || localStorage.getItem('access_token') == null) {
+			// alert('请先登录');
+			console.log("未登录");
+		}
+	})
+	</script>
 
-layui.use('layim', function(){
+	</div>
+
+	<script>
+		layui.use('layim', function(){
   var layim = layui.layim;
   
   //基础配置
@@ -158,8 +144,8 @@ layui.use('layim', function(){
     ,voice: false //声音提醒，默认开启，声音文件为：default.mp3
     
     // ,msgbox: '/layim/demo/msgbox.html' //消息盒子页面地址，若不开启，剔除该项即可
-    ,msgbox: layui.cache.dir + 'css/modules/layim/html/msgbox.html' //消息盒子页面地址，若不开启，剔除该项即可
-    ,find: layui.cache.dir + '/layim/demo/find.html' //发现页面地址，若不开启，剔除该项即可
+    ,msgbox: '/layui/html/msgbox.html' //消息盒子页面地址，若不开启，剔除该项即可
+    ,find: '/layui/html/find.html' //发现页面地址，若不开启，剔除该项即可
     
   });
   //监听在线状态的切换事件
@@ -231,15 +217,8 @@ wbSock.onmessage = function(res){
 	},12000)
 
 });
-</script>
-
+	</script>
 <!--      聊天系统    -->
-	</div>
-
-	<!-- jQuery -->
-	<script src="js/jquery.min.js"></script>
-	<!-- MAIN JS -->
-	<script src="js/http.js"></script>
 	<!-- jQuery Easing -->
 	<script src="js/jquery.easing.1.3.js"></script>
 	<!-- Bootstrap -->

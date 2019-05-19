@@ -5,6 +5,7 @@ use think\Db;
 use think\Exception;
 use think\Request;
 use app\common\model\UserModel;
+use app\common\model\ChatGroupModel;
 use app\common\model\ChatGroupMember;
 use app\common\model\ChatMyGroupModel;
 
@@ -45,6 +46,7 @@ class Chat
 			echo $this->reData(0, '请重新登录-',['url' => '登录地址']);
 			die;
 		}
+		return 1;
 	}
 
 	/**
@@ -84,12 +86,6 @@ class Chat
               ]
             ];
 	}
-
-
-	public function ceshi(){
-		dd(ChatMyGroupModel::friendList('2CB99992FE060C4B897B0E9419887AC8'));
-	}
-
 	/**
 	 *  上传图片
 	 *      {
@@ -187,6 +183,116 @@ class Chat
             	];
 	}
 
+	/**
+	 * [addfriend description]
+	 * @return [type] [description]
+	 */
+	public function addfriend(){
+		// 获取参数
+		$data = $this->request->param();
+		// 判断登录是否过期
+		if (!$this->isLogin($data)) {
+			return 0;die;
+		};
+		// 数据操作 判断是否有记录
+		// 当记录的状态返回 1 的时候  已做处理
+		// $reData = Db('blog_chat_request')->where([
+		// 		're_id' => $data['requestId'],
+		// 		'status' => 0,
+		// 	])->find();
+		// if (!$reData) {
+		// 	return $this->reData(0, '没有此请求', []);
+		// }
+
+	}
+
+	public function cancelfriend(){
+
+	}
+
+	/**
+	 * [findFriendTotal 查询好友 群组]
+	 * @return [type] [description]
+	 */
+	public function findfriendtotal(){
+		$data = $this->request->param();
+		if (!$this->isLogin($data)) {
+			return 0;die;
+		};
+		// 查询好友以及群组
+		if($data['type'] == 'friend'){
+			// 这里应该做一个 判断处理  昵称以及编号的查询
+			$serachData = UserModel::where('user_nick','like','%'.$data['id'].'%')->where('is_status',1)->field('user_qq as id,user_nick as name,is_chat_sign as text,user_img as img')->select();
+		}else if($data['type'] == 'group'){
+			$serachData =  ChatGroupModel::where('groupName', 'like' ,'%'.$data["id"].'%')->field('groupIdx as id,groupName as name,des as text,group_img as img')->select();
+		}
+		return $this->reData(1,'',$serachData);
+	}
+
+	/**
+	 * [creategroup 创建群]
+	 * @return [type] [description]
+	 */
+	public function creategroup(){
+
+		$data = $this->request->param();
+		if (!$this->isLogin($data)) {
+			return 0;die;
+		};
+		/**
+		 * 做用户处理 每个用户不可以创建群超过三个
+		 */
+		$groupCount = ChatGroupModel::where('belong',$data['opend'])->count();
+		if ($groupCount > 3) {
+			return $this->reData(0, "每个用户只能创建三个群", []);die;
+		}
+		$dataGroup = json_decode($data['data'] ,true);
+		$dataGroup['group_img'] = 'http://test.guoshanchina.com/uploads/person/911058.jpg';
+		$dataGroup['status'] = 1;
+		// $i = ChatGroupModel::insert($dataGroup);
+		$i = 1;
+		if ($i) {
+			return $this->reData(1,"创建群成功",[]);
+		}else{
+			return $this->reData(0,"创建群失败",[]);
+		}
+	}
+
+
+	/**
+	 * [grouplist 请求组的数据]
+	 * @return [type] [description]
+	 */
+	public function grouplist(){
+
+		$data = $this->request->param();
+		if (!$this->isLogin($data)) {
+			return 0;die;
+		};
+
+		$data = ChatMyGroupModel::where('opend',$data['opend'])->field('mygroupIdx,mygroupName')->order('weight desc')->select();
+		return $data;
+	}
+
+	/**
+	 * [addrequest 添加好友或者群组]
+	 * @return [type] [description]
+	 */
+	public function addrequest(){
+
+		$data = $this->request->param();
+		if (!$this->isLogin($data)) {
+			return 0;die;
+		};
+		// form_id
+		// to_id
+		// postscript
+		// c_time
+		// status
+		// group_id
+		$map['postscript'] = $data['postscript'];
+		$map['to_id'] = $data['postscript'];
+	}
 	/**
 	 * [reData 返回数据]
 	 * @param  integer $code [状态]

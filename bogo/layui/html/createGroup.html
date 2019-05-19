@@ -1,0 +1,56 @@
+
+<script src="../../js/jquery-1.12.0.min.js"></script>
+<script src="../layui.js"></script>
+  <script src="../../js/http.js"></script>
+  <script src="../../js/swoole.js"></script>
+<link rel="stylesheet" href="../css/layui.css" media="all">
+<br>
+<form class="layui-form layui-row mt15">
+  <div class="layui-form-item layui-col-xs11">
+    <label class="layui-form-label">群名称</label>
+    <div class="layui-input-block">
+      <input type="text" name="groupName" id="groupName" lay-verify="required" autocomplete="off" placeholder="为你们的群取个给力的名字吧！" class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item layui-col-xs11">
+    <label class="layui-form-label">群简介</label>
+    <div class="layui-input-block">
+      <input type="text" name="des" id="des" autocomplete="off" placeholder="简单介绍一下吧！" class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item layui-col-xs11">
+    <label class="layui-form-label">群规模</label>
+    <div class="layui-input-block">
+		<input type="radio" name="number" value="200" title="200人">
+		<input type="radio" name="number" value="500" title="500人" checked="">    	
+		<input type="radio" name="number" value="1000" title="1000人">    	
+    </div>
+  </div>  
+  <div class="layui-form-item layui-col-xs11">
+    <label class="layui-form-label">加群验证</label>
+    <div class="layui-input-block">
+		<input type="radio" name="approval" value="1" title="需要验证" checked="">
+		<input type="radio" name="approval" value="-1" title="无需验证">    	
+    </div>
+  </div>    
+  <div class="layui-form-item layui-col-xs10 layui-col-xs-offset1 pt30">
+    <div class="layui-input-block">
+      <a lay-submit lay-filter="creategroup" class="layui-btn btncolor sure" >确认创建</a>
+      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    </div>
+  </div>    
+</form>
+<script>
+   layui.use('form', function(){
+        var form = layui.form;
+        form.render();
+        form.on('submit(*)',function(data){
+          var fromData = data.field;
+          fromData['belong'] = opend;
+          $.post(sUrl+"api/chat/creategroup",{'data' : JSON.stringify(fromData), 'token' : token, 'opend' : opend}, function(rData){
+              var rData = JSON.parse(rData);
+              layer.msg(rData['msg']); 
+          })
+        })
+   })
+</script>

@@ -1,0 +1,148 @@
+
+<script src="../../js/jquery-1.12.0.min.js"></script>
+<script src="../layui.js"></script>
+<link rel="stylesheet" href="../css/layui.css" media="all">
+<link rel="stylesheet" href="../layim.css" media="all">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+<style>
+.layim-msgbox{margin: 15px;}
+.layim-msgbox li{position: relative; margin-bottom: 10px; padding: 0 130px 10px 60px; padding-bottom: 10px; line-height: 22px; border-bottom: 1px dotted #e2e2e2;}
+.layim-msgbox .layim-msgbox-tips{margin: 0; padding: 10px 0; border: none; text-align: center; color: #999;}
+.layim-msgbox .layim-msgbox-system{padding: 0 10px 10px 10px;}
+.layim-msgbox li p span{padding-left: 5px; color: #999;}
+.layim-msgbox li p em{font-style: normal; color: #FF5722;}
+
+.layim-msgbox-avatar{position: absolute; left: 0; top: 0; width: 50px; height: 50px;}
+.layim-msgbox-user{padding-top: 5px;}
+.layim-msgbox-content{margin-top: 3px;}
+.layim-msgbox .layui-btn-small{padding: 0 15px; margin-left: 5px;}
+.layim-msgbox-btn{position: absolute; right: 0; top: 12px; color: #999;}
+</style>
+
+	<ul class="layim-msgbox" id="LAY_view">
+		<li data-uid="166488" data-fromgroup="0">
+			<a href="/u/166488/" target="_blank">
+				<img src="//q.qlogo.cn/qqapp/101235792/B704597964F9BD0DB648292D1B09F7E8/100" class="layui-circle layim-msgbox-avatar"> 
+			</a> 
+			<p class="layim-msgbox-user"> 
+				<a href="/u/166488/" target="_blank">李彦宏</a> 
+					<span>刚刚</span> 
+			</p> 
+			<p class="layim-msgbox-content"> 申请添加你为好友 <span>附言: 有问题要问</span> </p> 
+			<p class="layim-msgbox-btn"> 
+				<button class="layui-btn layui-btn-small" id="agree" data-requestid="1" data-id="123">同意</button> 
+				<button class="layui-btn layui-btn-small layui-btn-primary" data-requestid="1" id="refuse" data-id="456">拒绝</button> 
+			</p> 
+		</li>
+		<li class="layim-msgbox-system"> 
+		 	<p>
+		 		<em>系统：</em>雷军 拒绝了你的好友申请<span>10天前</span>
+		 	</p> 
+		</li> 
+			<div class="layui-flow-more">
+				<li class="layim-msgbox-tips">暂无更多新消息</li>
+			</div>
+		</ul>
+
+<!-- 
+	js
+	 脚本控制
+ -->
+
+	<script src="../../js/http.js"></script>
+	<script src="../../js/swoole.js"></script>
+	<script>
+	// 定义全局参数属性
+	layui.use('layer', function(){
+	  var layer = layui.layer;
+			// 这个是同意
+			$("#agree").on('click',function(){
+				var userId = $(this).data('id');
+				var requestId = $(this).data('requestid');
+				var agrgeHtml= '<div>';
+					agrgeHtml += '<div class="layim-add-box">';
+					agrgeHtml += '<div class="layim-add-img">';
+					agrgeHtml += '<img class="layui-circle" src="//q.qlogo.cn/qqapp/101235792/B704597964F9BD0DB648292D1B09F7E8/100">';
+					agrgeHtml += '<p>李彦宏</p>';
+					agrgeHtml += '</div>';
+					agrgeHtml += '<div class="layim-add-remark">';
+					agrgeHtml += '<p>选择分组</p>';
+					agrgeHtml += '<select class="layui-select layimGroup" id="LAY_layimGroup">';
+					agrgeHtml += '<option value="0">知名人物</option>';
+					agrgeHtml += '<option value="1">网红声优</option>';
+					agrgeHtml += '<option value="2">女神艺人</option>';
+					agrgeHtml += '</select>';
+					agrgeHtml += '</div>';
+					agrgeHtml += '</div>';
+				layer.open({
+						title : '添加好友'
+						,area: ['500px', '350px']
+						,content : agrgeHtml
+						,btn: ['同意', '取消'] //可以无限个按钮
+						,yes: function(evs){
+							var group =  $('.layimGroup option:selected').val();
+							// ajax 请求添加好友
+							$.ajax({
+								'type' : 'post',
+								'url'  : sUrl+'api/chat/addfriend',
+								'data' : {
+									'opend' : opend,
+									'token' : token,
+									'group' : group,
+									'userId' : userId,
+									'requestId' : requestId
+								},
+								'dataType' : 'json',
+								success:function(data){
+									var data = JSON.parse(data);
+								},
+								error:function(){
+									layer.msg("添加错误，请刷新页面尝试");
+								}
+							})
+							// wbSock
+						}
+				})
+			})
+			// 这个是拒绝
+			$("#refuse").on('click',function(){
+				var userId = $(this).data('id');
+				var requestId = $(this).data('requestid');
+				layer.open({
+			        type: 1
+			        ,title: false //不显示标题栏
+			        ,closeBtn: false
+			        ,area: '300px;'
+			        ,shade: 0.8
+			        ,id: 'LAY_layuipro' //设定一个id，防止重复弹出
+			        ,btn: ['残忍拒绝', '我再想想']
+			        ,btnAlign: 'c'
+			        ,moveType: 1 //拖拽模式，0或者1
+			        ,content: '<div style="padding: 50px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 300;">确定拒绝吗？ ^_^</div>'
+			        ,yes: function(evs){ // Cancel friends
+							$.ajax({
+								'type' : 'post',
+								'url'  : sUrl+'api/chat/cancelfriend',
+								'data' : {
+									'opend' : opend,
+									'token' : token,
+									'userId' : userId,
+									'requestId' : requestId
+								},
+								'dataType' : 'json',
+								success:function(data){
+									var data = JSON.parse(data);
+								},
+								error:function(){
+									layer.msg("添加错误，请刷新页面尝试");
+								}
+							})
+			        }
+			      });
+			})
+		})
+	</script>
+	<!-- 添加好友 -->
+
+	
+	
