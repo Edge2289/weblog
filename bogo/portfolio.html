@@ -148,6 +148,14 @@
     ,find: '/layui/html/find.html' //发现页面地址，若不开启，剔除该项即可
     
   });
+
+    //监听layim建立就绪
+  layim.on('ready', function(res){
+  	if (res.mine.msgbox > 0) {
+    	layim.msgbox(); //模拟消息盒子有新消息，实际使用时，一般是动态获得
+  	}
+  });
+
   //监听在线状态的切换事件
   layim.on('online', function(status){
 	    wbSock.send(JSON.stringify({

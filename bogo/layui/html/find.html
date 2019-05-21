@@ -100,9 +100,10 @@
 	<script src="../../js/http.js"></script>
 	<script src="../../js/swoole.js"></script>
 <script>
-    layui.use('form', function(){
+    layui.use(['form','layim'], function(){
 
         var form = layui.form;
+        layim = layui.layim;
         form.render();
 
         $(".find").click(function(){
@@ -120,6 +121,10 @@
         		'data' : {'type':type,'id' : fgId,'token':token,'opend':opend},
         		'dataType' : 'json',
         		success:function(data){
+        			if (data['code'] == 0) {
+        				layer.msg(data['msg']);
+        				return false;
+        			}
         			var data = JSON.parse(data);
         			var fgHtml = '';
         			if (data['data'].length == 0) {
@@ -186,6 +191,16 @@ $('body').on('click', '.add', function () {//添加好友
                     	layer.msg("错误提交");
                     	return false;
                     }
+                    if (uid == opend) {
+                    	layer.msg("不可以添加自己为好友");
+                    	return false;
+                    }
+                    // isNaN(uid)  false; 未数字
+                    var cHtml = '<div id="" class="layui-layer-content"><div class="layim-add-box"><div class="layim-add-img"><img class="layui-circle" src="'+img+'"><p>'+name+'</p></div><div class="layim-add-remark">';
+                    	if (isNaN(uid)) {
+                    		cHtml +='<select class="layui-select layimGroup" id="LAY_layimGroup">'+groupList+'</select>';
+                    	}
+                    cHtml +='<textarea id="LAY_layimRemark" placeholder="验证信息" class="layui-textarea postscript"></textarea></div></div></div>';
 		            layer.open({//弹出添加好友对话框
 		                isAdd: false
 		                ,img: img
@@ -194,17 +209,24 @@ $('body').on('click', '.add', function () {//添加好友
 		                ,type: 1
 		        		,area: ['460px', '300px']
 		        		,btn: ['发送申请', '取消']
-		                ,content: '<div id="" class="layui-layer-content"><div class="layim-add-box"><div class="layim-add-img"><img class="layui-circle" src="'+img+'"><p>'+name+'</p></div><div class="layim-add-remark"><select class="layui-select layimGroup" id="LAY_layimGroup">'+groupList+'</select><textarea id="LAY_layimRemark" placeholder="验证信息" class="layui-textarea postscript"></textarea></div></div></div>'
-		                ,yes: function(){//确认发送添加请求
-		                	var groupid = $('.layimGroup option:selected').val();
+		                ,content: cHtml
+		                ,yes: function(index){//确认发送添加请求
+
+		                	var groupid = isNaN(uid) ? $('.layimGroup option:selected').val() : '';
 		                	var postscript = $('.postscript').val();
-		                    $.post(sUrl+'api/chat/addrequest',{'opend':opend,'token':token,'groupid':groupid,'postscript':postscript},function(data){
+		                    $.post(sUrl+'api/chat/addrequest',{'opend':opend,'token':token,'groupid':groupid,'postscript':postscript,'to_id':uid},function(data){
 								var data = JSON.parse(data);
 								console.log(data);
+								if (data['code'] == 0) {
+									layer.msg(data['msg']);
+									return false;
+								}else if (data['code'] == 2){
+									parent.layui.layim.addList(data['data']);
+								}
+								layer.msg(data['msg']);
+								layer.close(index);
 							})
 
-		                },function(){
-		                    layer.close(index);
 		                }
 		            });            
         }

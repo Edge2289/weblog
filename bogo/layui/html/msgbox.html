@@ -19,30 +19,9 @@
 .layim-msgbox-btn{position: absolute; right: 0; top: 12px; color: #999;}
 </style>
 
-	<ul class="layim-msgbox" id="LAY_view">
-		<li data-uid="166488" data-fromgroup="0">
-			<a href="/u/166488/" target="_blank">
-				<img src="//q.qlogo.cn/qqapp/101235792/B704597964F9BD0DB648292D1B09F7E8/100" class="layui-circle layim-msgbox-avatar"> 
-			</a> 
-			<p class="layim-msgbox-user"> 
-				<a href="/u/166488/" target="_blank">李彦宏</a> 
-					<span>刚刚</span> 
-			</p> 
-			<p class="layim-msgbox-content"> 申请添加你为好友 <span>附言: 有问题要问</span> </p> 
-			<p class="layim-msgbox-btn"> 
-				<button class="layui-btn layui-btn-small" id="agree" data-requestid="1" data-id="123">同意</button> 
-				<button class="layui-btn layui-btn-small layui-btn-primary" data-requestid="1" id="refuse" data-id="456">拒绝</button> 
-			</p> 
-		</li>
-		<li class="layim-msgbox-system"> 
-		 	<p>
-		 		<em>系统：</em>雷军 拒绝了你的好友申请<span>10天前</span>
-		 	</p> 
-		</li> 
-			<div class="layui-flow-more">
-				<li class="layim-msgbox-tips">暂无更多新消息</li>
-			</div>
-		</ul>
+	<ul class="layim-msgbox msgboxaa" id="LAY_view">
+
+	</ul>
 
 <!-- 
 	js
@@ -53,24 +32,79 @@
 	<script src="../../js/swoole.js"></script>
 	<script>
 	// 定义全局参数属性
-	layui.use('layer', function(){
+    layui.use(['form','layim'], function(){
+
+        var layim = layui.layim;
+		var groupData ;
+		// 加载请求信息盒子
+		$.ajax({
+			'type' : 'get',
+			'url'  : sUrl+'api/chat/crequst',
+			'sync' : true,
+			'data' : {
+					'opend' : opend,
+					'token' : token,
+				},
+			'dataType' : 'json',
+			success:function(data){
+				var data = JSON.parse(data);
+				groupData = data['data']['group'];
+				var reHtml = '';
+				data['data']['data']['request'].forEach(function(v,k){
+					reHtml += '<li data-uid="166488" data-fromgroup="0">';
+					reHtml += '<a href="/u/166488/" target="_blank">';
+					reHtml += '<img src="'+v['userhas']['user_img']+'" class="layui-circle layim-msgbox-avatar"> ';
+					reHtml += '</a> ';
+					reHtml += '<p class="layim-msgbox-user"> ';
+					reHtml += '<a href="/u/166488/" target="_blank">'+v['userhas']['user_nick']+'</a> ';
+					reHtml += '<span>'+v['c_time']+'</span> ';
+					reHtml += '</p> ';
+					reHtml += '<p class="layim-msgbox-content"> 申请添加你为好友 <span>附言: '+v['postscript']+'</span> </p> ';
+					reHtml += '<p class="layim-msgbox-btn"> ';
+					reHtml += '<button class="layui-btn layui-btn-small" id="agree" data-img="'+v['userhas']['user_img']+'" data-nick="'+v['userhas']['user_nick']+'" data-id="'+v['re_id']+'">同意</button> ';
+					reHtml += '<button class="layui-btn layui-btn-small layui-btn-primary" id="refuse" data-id="'+v['re_id']+'">拒绝</button> ';
+					reHtml += '</p> ';
+					reHtml += '</li>';
+				})
+				data['data']['data']['msg'].forEach(function(v,k){
+					reHtml += '<li class="layim-msgbox-system"> ';
+					reHtml += '<p>';
+					reHtml += '<em>系统：</em>'+v['userhas']['user_nick']+' '+v['to_status']+'了你的申请<span>'+v['c_time']+'</span>';
+					reHtml += '</p> ';
+					reHtml += '</li> ';
+				})
+				reHtml += '<div class="layui-flow-more">';
+				reHtml += '<li class="layim-msgbox-tips">暂无更多新消息</li>';
+				reHtml += '</div>';
+
+				$(".msgboxaa").append(reHtml);
+			},
+			error:function(){
+				layer.msg("请重新打开");
+			}
+		})
+
 	  var layer = layui.layer;
 			// 这个是同意
-			$("#agree").on('click',function(){
-				var userId = $(this).data('id');
-				var requestId = $(this).data('requestid');
+			$('body').on('click', '#agree', function () {
+				//$("#agree").on('click',function(){
+				var obj = this;
+				var requestId = $(this).data('id');
+				var userNick = $(this).data('nick');
+				var userImg = $(this).data('img');
+
 				var agrgeHtml= '<div>';
 					agrgeHtml += '<div class="layim-add-box">';
 					agrgeHtml += '<div class="layim-add-img">';
-					agrgeHtml += '<img class="layui-circle" src="//q.qlogo.cn/qqapp/101235792/B704597964F9BD0DB648292D1B09F7E8/100">';
-					agrgeHtml += '<p>李彦宏</p>';
+					agrgeHtml += '<img class="layui-circle" src="'+userImg+'">';
+					agrgeHtml += '<p>'+userNick+'</p>';
 					agrgeHtml += '</div>';
 					agrgeHtml += '<div class="layim-add-remark">';
 					agrgeHtml += '<p>选择分组</p>';
 					agrgeHtml += '<select class="layui-select layimGroup" id="LAY_layimGroup">';
-					agrgeHtml += '<option value="0">知名人物</option>';
-					agrgeHtml += '<option value="1">网红声优</option>';
-					agrgeHtml += '<option value="2">女神艺人</option>';
+					groupData.forEach(function(v,k){
+						agrgeHtml += '<option value="'+v['mygroupIdx']+'">'+v['mygroupName']+'</option>';
+					})
 					agrgeHtml += '</select>';
 					agrgeHtml += '</div>';
 					agrgeHtml += '</div>';
@@ -89,12 +123,17 @@
 									'opend' : opend,
 									'token' : token,
 									'group' : group,
-									'userId' : userId,
-									'requestId' : requestId
+									'requestId' : requestId,
+									'type' : 1
 								},
 								'dataType' : 'json',
 								success:function(data){
 									var data = JSON.parse(data);
+									parent.layui.layim.addList(data['data']);
+									layer.close(evs);
+									$(obj).parent('.layim-msgbox-btn').html("已同意");
+									// 推送到swoole上面
+									
 								},
 								error:function(){
 									layer.msg("添加错误，请刷新页面尝试");
@@ -105,9 +144,10 @@
 				})
 			})
 			// 这个是拒绝
-			$("#refuse").on('click',function(){
-				var userId = $(this).data('id');
-				var requestId = $(this).data('requestid');
+			$('body').on('click', '#refuse', function () {
+			// $("#refuse").on('click',function(){
+				var obj = this;
+				var requestId = $(this).data('id');
 				layer.open({
 			        type: 1
 			        ,title: false //不显示标题栏
@@ -126,12 +166,16 @@
 								'data' : {
 									'opend' : opend,
 									'token' : token,
-									'userId' : userId,
 									'requestId' : requestId
 								},
 								'dataType' : 'json',
 								success:function(data){
 									var data = JSON.parse(data);
+									if (data['code'] == 1) {
+										layer.close(evs);
+										$(obj).parent('.layim-msgbox-btn').html("已拒绝");
+									}
+										layer.msg(data['msg']);	
 								},
 								error:function(){
 									layer.msg("添加错误，请刷新页面尝试");

@@ -112,6 +112,7 @@ class Service
 			// 推送消息
 			$this->sendMessage($server, $value, ['emit'=>'friendStatus', 'data'=>$data]);
 		}
+		// 获取消息盒子的信息
 
 		// 获取离线消息
 		$offData = Db('blog_chat_offline_message')
@@ -235,6 +236,10 @@ class Service
 					// 推送消息
 					$this->sendMessage($server, $value, $data);
 				}
+				break;
+			// 添加 拒绝 好友 群组 后的操作	
+			case 'addcanelfriend':
+				# code...
 				break;
 
 			default:
