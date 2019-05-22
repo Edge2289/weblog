@@ -74,7 +74,11 @@
 				data['data']['data']['msg'].forEach(function(v,k){
 					reHtml += '<li class="layim-msgbox-system"> ';
 					reHtml += '<p>';
-					reHtml += '<em>系统：</em>'+v['userhas']['user_nick']+' '+v['to_status']+'了你的申请<span>'+v['c_time']+'</span>';
+					if (v['type'] == 1) {
+						reHtml += '<em>系统：</em>'+v['userhas']['user_nick']+' '+v['to_status']+'了你的好友申请<span>'+v['c_time']+'</span>';
+					}else{
+						reHtml += '<em>系统：</em>'+v['usermsghas']['user_nick']+' '+v['to_status']+'了你申请加入'+v['grouphas']['groupName']+'群<span>'+v['c_time']+'</span>';
+					}
 					reHtml += '</p> ';
 					reHtml += '</li> ';
 				})

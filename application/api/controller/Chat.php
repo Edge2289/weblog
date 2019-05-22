@@ -32,7 +32,6 @@ class Chat
 	    header('Access-Control-Allow-Credentials: true'); // 设置是否允许发送 cookies
 	    header('Access-Control-Allow-Headers: Content-Type,Content-Length,Accept-Encoding,X-Requested-with, Origin'); // 设置允许自定义请求头的字段
 		$this->request = Request::instance();
-		// $this->isLogin($this->request->param());
 	}
 
 	public function isLogin($param){
@@ -226,19 +225,19 @@ class Chat
 			// 1 先同意者添加
 			try{
 				$toData = UserModel::where('user_qq',$reData['form_id'])->field('user_nick,is_chat_sign,user_img')->find();
-				// $to_map['mygroupIdx'] = $data['group'];
-				// $to_map['opend'] = $reData['form_id'];
-				// $to_map['nickName'] = $toData['user_nick'];
+				$to_map['mygroupIdx'] = $data['group'];
+				$to_map['opend'] = $reData['form_id'];
+				$to_map['nickName'] = $toData['user_nick'];
 
-				// $form_map['mygroupIdx'] = $reData['group_id'];
-				// $form_map['opend'] = $reData['to_id'];
-				// $form_map['nickName'] = UserModel::where('user_qq',$reData['to_id'])->value('user_nick');
-				// $f_i = ChatMyFriendModel::insert($form_map);
-				// $t_i = ChatMyFriendModel::insert($to_map);
-				// $c_s = ChatRequest::where('re_id',$data['requestId'])->update(['to_status'=>1,'status'=>1,'to_read'=>0,'o_time'=>time()]);
-				// if (!($f_i && $t_i && $c_s)) {
-				// 	throw new Exception("添加好友失败");
-				// }
+				$form_map['mygroupIdx'] = $reData['group_id'];
+				$form_map['opend'] = $reData['to_id'];
+				$form_map['nickName'] = UserModel::where('user_qq',$reData['to_id'])->value('user_nick');
+				$f_i = ChatMyFriendModel::insert($form_map);
+				$t_i = ChatMyFriendModel::insert($to_map);
+				$c_s = ChatRequest::where('re_id',$data['requestId'])->update(['to_status'=>1,'status'=>1,'to_read'=>0,'o_time'=>time()]);
+				if (!($f_i && $t_i && $c_s)) {
+					throw new Exception("添加好友失败");
+				}
 
 				// 返回好友信息  用于追加上面板
 				$reUserData['type'] = 'friend';
@@ -293,9 +292,8 @@ class Chat
 					$cmfData['type'] = 3;
 					$cmfData['gagTime'] = 0;
 					$cmfData['nickName'] = UserModel::where('user_qq',$reData['form_id'])->value('user_nick');
-					// $i = ChatGroupMember::insert($cmfData);
+					$i = ChatGroupMember::insert($cmfData);
 					$c_s = ChatRequest::where('re_id',$data['requestId'])->update(['to_status'=>1,'status'=>1,'to_read'=>0,'o_time'=>time()]);
-					$i = 1;
 					if ($i) {
 						$rrda['id'] = $reData['form_id'];
 						$rrda['type'] = 2;
@@ -382,8 +380,7 @@ class Chat
 		$dataGroup = json_decode($data['data'] ,true);
 		$dataGroup['group_img'] = 'http://test.guoshanchina.com/uploads/person/911058.jpg';
 		$dataGroup['status'] = 1;
-		// $i = ChatGroupModel::insert($dataGroup);
-		$i = 1;
+		$i = ChatGroupModel::insert($dataGroup);
 		if ($i) {
 			return $this->reData(1,"创建群成功",[]);
 		}else{
@@ -467,8 +464,7 @@ class Chat
 					$cmfData['type'] = 3;
 					$cmfData['gagTime'] = 0;
 					$cmfData['nickName'] = UserModel::where('user_qq',$data['opend'])->value('user_nick');
-					// $i = ChatGroupMember::insert($cmfData);
-					$i = 1;
+					$i = ChatGroupMember::insert($cmfData);
 					// 做申请记录
 					$rData['form_id'] = $data['opend'];
 					$rData['to_id'] = $data['to_id'];
@@ -478,8 +474,7 @@ class Chat
 					$rData['postscript'] =  $data['postscript'];
 					$rData['to_status'] = 1;
 					$rData['to_read'] = 1;
-					// $r = ChatRequest::insert($rData);
-					$r = 1;
+					$r = ChatRequest::insert($rData);
 					// 返回的数据
 					$groupDD = ChatGroupModel::where("groupIdx",$data['to_id'])->field('groupName,group_img')->find();
 					$gList['type'] = 'group';

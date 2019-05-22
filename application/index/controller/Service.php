@@ -279,7 +279,7 @@ class Service
 						$gList['type'] = 'group';
 						$gList['avatar'] = $groupDD['group_img'];
 						$gList['groupname'] = $groupDD['groupName'];
-						$gList['id'] = $data['to_id'];
+						$gList['id'] = $i['to_id'];
 
 						$this->sendMessage($server, $data['data']['opend'], ['type'=>1,'emit'=>'addFriendGroup','data'=>$gList]);
 

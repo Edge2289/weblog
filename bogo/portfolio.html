@@ -211,6 +211,7 @@ wbSock.onmessage = function(res){
 			if (resData['type'] == 1) {
 				// 同意添加
 				layim.addList(resData['data']);
+				layim.msgbox(1);
 			}else{
 				layim.msgbox(resData['data']);
 			}
