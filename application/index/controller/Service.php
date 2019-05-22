@@ -248,7 +248,7 @@ class Service
 				if ($data['data']['type'] == 1) {
 					// 添加好友操作
 					// 查看是否同意以及拒绝
-					if ($i['to_status'] == 1) {
+					if ($i['to_status'] == "已同意") {
 						// 同意
 						// 返回好友信息  用于追加上面板
 						$toData = UserModel::where('user_qq',$data['data']['opend'])->field('user_img,user_nick,is_chat_sign')->find();
@@ -262,7 +262,7 @@ class Service
 
 						$this->sendMessage($server, $data['data']['opend'], ['type'=>1,'emit'=>'addFriendGroup','data'=>$reUserData]);
 
-					}else if($i['to_status'] == 2){
+					}else if($i['to_status'] == "已拒绝"){
 						// 拒绝
 						$this->sendMessage($server, $data['data']['opend'], ['type'=>2,'emit'=>'addFriendGroup','data'=>1]);
 					}
@@ -270,7 +270,7 @@ class Service
 				}else{
 					// 添加群
 					
-					if ($i['to_status'] == 1) {
+					if ($i['to_status'] == "已同意") {
 						// 同意
 						
 						$groupDD = ChatGroupModel::where("groupIdx",$i['to_id'])->field('groupName,group_img')->find();
@@ -282,7 +282,7 @@ class Service
 
 						$this->sendMessage($server, $data['data']['opend'], ['type'=>1,'emit'=>'addFriendGroup','data'=>$gList]);
 
-					}else if($i['to_status'] == 2){
+					}else if($i['to_status'] == "已拒绝"){
 						// 拒绝
 						$this->sendMessage($server, $data['data']['opend'], ['type'=>2,'emit'=>'addFriendGroup','data'=>1]);
 					}

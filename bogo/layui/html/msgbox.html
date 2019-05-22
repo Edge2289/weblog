@@ -148,8 +148,7 @@
 									layer.close(evs);
 									$(obj).parent('.layim-msgbox-btn').html("已同意");
 									// 推送到swoole上面
-									console.log(data['data']['id']);
-									wbSock:send(JSON.stringify({
+									wbSock.send(JSON.stringify({
 										type : 'addFriendGroup',
 										data : {
 											"type" : data['data']['type'],
