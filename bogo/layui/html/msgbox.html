@@ -59,9 +59,14 @@
 					reHtml += '<a href="/u/166488/" target="_blank">'+v['userhas']['user_nick']+'</a> ';
 					reHtml += '<span>'+v['c_time']+'</span> ';
 					reHtml += '</p> ';
-					reHtml += '<p class="layim-msgbox-content"> 申请添加你为好友 <span>附言: '+v['postscript']+'</span> </p> ';
+					if (v['type'] == 1) {
+						msgHtml = '申请添加你为好友';
+					}else{
+						msgHtml = '申请进'+v['grouphas']['groupName']+'群';
+					}
+					reHtml += '<p class="layim-msgbox-content">'+msgHtml+'<span>附言: '+v['postscript']+'</span> </p> ';
 					reHtml += '<p class="layim-msgbox-btn"> ';
-					reHtml += '<button class="layui-btn layui-btn-small" id="agree" data-img="'+v['userhas']['user_img']+'" data-nick="'+v['userhas']['user_nick']+'" data-id="'+v['re_id']+'">同意</button> ';
+					reHtml += '<button class="layui-btn layui-btn-small" id="agree" data-img="'+v['userhas']['user_img']+'" data-type="'+v['type']+'" data-nick="'+v['userhas']['user_nick']+'" data-id="'+v['re_id']+'">同意</button> ';
 					reHtml += '<button class="layui-btn layui-btn-small layui-btn-primary" id="refuse" data-id="'+v['re_id']+'">拒绝</button> ';
 					reHtml += '</p> ';
 					reHtml += '</li>';
@@ -87,11 +92,11 @@
 	  var layer = layui.layer;
 			// 这个是同意
 			$('body').on('click', '#agree', function () {
-				//$("#agree").on('click',function(){
 				var obj = this;
 				var requestId = $(this).data('id');
 				var userNick = $(this).data('nick');
 				var userImg = $(this).data('img');
+				var type = $(this).data('type');
 
 				var agrgeHtml= '<div>';
 					agrgeHtml += '<div class="layim-add-box">';
@@ -100,12 +105,17 @@
 					agrgeHtml += '<p>'+userNick+'</p>';
 					agrgeHtml += '</div>';
 					agrgeHtml += '<div class="layim-add-remark">';
-					agrgeHtml += '<p>选择分组</p>';
-					agrgeHtml += '<select class="layui-select layimGroup" id="LAY_layimGroup">';
-					groupData.forEach(function(v,k){
-						agrgeHtml += '<option value="'+v['mygroupIdx']+'">'+v['mygroupName']+'</option>';
-					})
-					agrgeHtml += '</select>';
+					if (type == 1) {
+						agrgeHtml += '<p>选择分组</p>';
+						agrgeHtml += '<select class="layui-select layimGroup" id="LAY_layimGroup">';
+						groupData.forEach(function(v,k){
+							agrgeHtml += '<option value="'+v['mygroupIdx']+'">'+v['mygroupName']+'</option>';
+						})
+						agrgeHtml += '</select>';
+					}else{
+						agrgeHtml += '同意申请进群';
+					}
+
 					agrgeHtml += '</div>';
 					agrgeHtml += '</div>';
 				layer.open({
@@ -114,7 +124,10 @@
 						,content : agrgeHtml
 						,btn: ['同意', '取消'] //可以无限个按钮
 						,yes: function(evs){
-							var group =  $('.layimGroup option:selected').val();
+							var group = '';
+							if (type == 1) {
+								group =  $('.layimGroup option:selected').val();
+							}
 							// ajax 请求添加好友
 							$.ajax({
 								'type' : 'post',
@@ -124,16 +137,26 @@
 									'token' : token,
 									'group' : group,
 									'requestId' : requestId,
-									'type' : 1
+									'type' : type
 								},
 								'dataType' : 'json',
 								success:function(data){
 									var data = JSON.parse(data);
-									parent.layui.layim.addList(data['data']);
+									if (data['data']['type'] == 1) {
+										parent.layui.layim.addList(data['data']);
+									}
 									layer.close(evs);
 									$(obj).parent('.layim-msgbox-btn').html("已同意");
 									// 推送到swoole上面
-									
+									console.log(data['data']['id']);
+									wbSock:send(JSON.stringify({
+										type : 'addFriendGroup',
+										data : {
+											"type" : data['data']['type'],
+											"opend" : data['data']['id'],
+											"re_id" : data['data']['re_id'],
+										}
+									}));
 								},
 								error:function(){
 									layer.msg("添加错误，请刷新页面尝试");

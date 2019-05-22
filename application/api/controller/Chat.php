@@ -203,24 +203,24 @@ class Chat
 			return 0;die;
 		};
 
-		// 数据操作 判断是否有记录
-		// 当记录的状态返回 1 的时候  已做处理
-		$reData = Db('blog_chat_request')->where([
-				're_id' => $data['requestId'],
-				'to_id' => $data['opend'],
-				'status' => 0,
-			])->find();
-		if (!$reData) {
-			return $this->reData(0, '没有此请求', []);
-		}
-
-		// 做判断
-		$userFriend = Db::query('SELECT * from blog_chat_my_group a inner JOIN blog_chat_my_friend b ON a.mygroupIdx = b.mygroupIdx where a.opend = "'.$data['opend'].'" and b.opend = "'.$reData['form_id'].'"');
-		if ($userFriend) {
-			return $this->reData(0,'该用户已经是你的好友',[]);
-		}
-
 		if ($data['type'] == 1) {
+
+
+			// 数据操作 判断是否有记录
+			// 当记录的状态返回 1 的时候  已做处理
+			$reData = Db('blog_chat_request')->where([
+					're_id' => $data['requestId'],
+					'to_id' => $data['opend'],
+					'status' => 0,
+				])->find();
+			if (!$reData) {
+				return $this->reData(0, '没有此请求', []);
+			}
+			// 做判断
+			$userFriend = Db::query('SELECT * from blog_chat_my_group a inner JOIN blog_chat_my_friend b ON a.mygroupIdx = b.mygroupIdx where a.opend = "'.$data['opend'].'" and b.opend = "'.$reData['form_id'].'"');
+			if ($userFriend) {
+				return $this->reData(0,'该用户已经是你的好友',[]);
+			}
 			# 这个是同意
 			// 当未添加好友时 添加好友
 			// 1 先同意者添加
@@ -247,6 +247,8 @@ class Chat
 				$reUserData['groupid'] = $data['group'];
 				$reUserData['id'] = $reData['form_id'];
 				$reUserData['sign'] = $toData['is_chat_sign'];
+				$reUserData['type'] = 1;
+				$reUserData['re_id'] = $data['requestId'];
 
 				return $this->reData(1,"添加成功", $reUserData);
 				// 后 申请者添加
@@ -255,6 +257,55 @@ class Chat
 			}
 		}else{
 			// 群
+			try{
+				$reData = Db('blog_chat_request')->where([
+						're_id' => $data['requestId'],
+						'group_id' => $data['opend'],
+						'status' => 0,
+					])->field('to_id,form_id')->find();
+				if (!$reData) {
+					return $this->reData(0, '没有此请求', []);
+				}
+				// 判断是否在群里面
+				$igu = ChatGroupMember::where([
+							'groupIdx' => $reData['to_id'],
+							'opend' => $data['opend'],
+							])->count();
+				if ($igu) {
+					return $this->reData(0,'已是群成员',[]);
+				}
+
+				$dataGroup = ChatGroupModel::where('groupIdx',$reData['to_id'])->field('number,approval')->find();
+				if (!$dataGroup) {
+					return $this->reData(0,'该群已解散',[]);
+				}
+				$userCount = ChatGroupMember::where('groupIdx',$reData['to_id'])->count();
+				$dataGroup = $dataGroup->toArray();
+				if ($userCount >= $dataGroup['number']) {
+					return $this->reData(0,'该群已满人',[]);
+				}
+				// 添加进群操作
+				
+					$cmfData['groupIdx'] = $reData['to_id'];
+					$cmfData['opend'] = $reData['form_id'];
+					$cmfData['status'] = 1;
+					$cmfData['addTime'] = 1;
+					$cmfData['type'] = 3;
+					$cmfData['gagTime'] = 0;
+					$cmfData['nickName'] = UserModel::where('user_qq',$reData['form_id'])->value('user_nick');
+					// $i = ChatGroupMember::insert($cmfData);
+					$i = 1;
+					if ($i) {
+						$rrda['id'] = $reData['form_id'];
+						$rrda['type'] = 2;
+						$rrda['re_id'] = $data['requestId'];
+						return $this->reData(1,'同意成功',$rrda);
+					}else{
+						throw new Exception("同意失败,请重试");
+					}
+			} catch (Exception $e){
+				return $this->reData(0,$e->getMessage(),[]);
+			}
 		}
 	}
 
@@ -448,7 +499,9 @@ class Chat
 			}
 
 			$pp = Db::query('SELECT a.user_qq FROM blog_user a RIGHT JOIN blog_chat_group b ON b.belong = a.user_id WHERE b.groupIdx = '.$data['to_id']);
-			 $groupid= $pp[0]['user_qq'];
+			$groupid= $pp[0]['user_qq'];
+			// 群的情况下  保存type
+			$map['type'] = 2;
 		}
 		$map['form_id'] = $data['opend'];
 		$map['to_id'] = $data['to_id'];

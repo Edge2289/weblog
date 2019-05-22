@@ -152,7 +152,7 @@
     //监听layim建立就绪
   layim.on('ready', function(res){
   	if (res.mine.msgbox > 0) {
-    	layim.msgbox(); //模拟消息盒子有新消息，实际使用时，一般是动态获得
+    	layim.msgbox(res.mine.msgbox); //模拟消息盒子有新消息，实际使用时，一般是动态获得
   	}
   });
 
@@ -205,6 +205,15 @@ wbSock.onmessage = function(res){
 		case 'friendStatus':
 				// 用户的状态切换
       		layim.setFriendStatus(resData['data']['opend'], resData['data']['status']);  //更新用户状态
+			break;
+		case 'addFriendGroup':
+			// 添加好友
+			if (resData['type'] == 1) {
+				// 同意添加
+				layim.addList(resData['data']);
+			}else{
+				layim.msgbox(resData['data']);
+			}
 			break;
 		default :
 				// 错误返回

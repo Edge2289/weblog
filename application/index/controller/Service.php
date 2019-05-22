@@ -2,6 +2,7 @@
 
 use think\Db;
 use app\common\model\UserModel;
+use app\common\model\ChatRequest;
 use app\common\model\ChatMyGroupModel;
 use app\common\model\ChatGroupMember;
 /**
@@ -238,8 +239,54 @@ class Service
 				}
 				break;
 			// 添加 拒绝 好友 群组 后的操作	
-			case 'addcanelfriend':
-				# code...
+			case 'addFriendGroup':
+				$i = ChatRequest::where('re_id',$data['data']['re_id'])->find();
+				if (!$i){
+					 // 没有这条信息 终止操作
+					die;
+				}
+				if ($data['data']['type'] == 1) {
+					// 添加好友操作
+					// 查看是否同意以及拒绝
+					if ($i['to_status'] == 1) {
+						// 同意
+						// 返回好友信息  用于追加上面板
+						$toData = UserModel::where('user_qq',$data['data']['opend'])->field('user_img,user_nick,is_chat_sign')->find();
+						$reUserData['type'] = 'friend';
+						$reUserData['groupid'] = $i['group_id'];
+						$reUserData['id'] = $data['data']['opend'];
+
+						$reUserData['avatar'] = $toData['user_img'];
+						$reUserData['username'] = $toData['user_nick'];
+						$reUserData['sign'] = $toData['is_chat_sign'];
+
+						$this->sendMessage($server, $data['data']['opend'], ['type':1,'emit':'addFriendGroup','data':$reUserData);
+
+					}else if($i['to_status'] == 2){
+						// 拒绝
+						$this->sendMessage($server, $data['data']['opend'], ['type':2,'emit':'addFriendGroup','data':1);
+					}
+					
+				}else{
+					// 添加群
+					
+					if ($i['to_status'] == 1) {
+						// 同意
+						
+						$groupDD = ChatGroupModel::where("groupIdx",$i['to_id'])->field('groupName,group_img')->find();
+
+						$gList['type'] = 'group';
+						$gList['avatar'] = $groupDD['group_img'];
+						$gList['groupname'] = $groupDD['groupName'];
+						$gList['id'] = $data['to_id'];
+
+						$this->sendMessage($server, $data['data']['opend'], ['type':1,'emit':'addFriendGroup','data':$gList);
+						
+					}else if($i['to_status'] == 2){
+						// 拒绝
+						$this->sendMessage($server, $data['data']['opend'], ['type':2,'emit':'addFriendGroup','data':1);
+					}
+				}
 				break;
 
 			default:

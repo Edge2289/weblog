@@ -40,16 +40,27 @@ class ChatRequest extends Model
 		return $this->hasOne("UserModel",'user_qq','form_id')->field('user_qq,user_img,user_nick');
 	}
 
+	public function grouphas(){
+		return $this->hasOne('ChatGroupModel','groupIdx','to_id')->field('groupIdx,groupName');
+	}
 
 	public static function cboxmsg($opend){
 
-		$data['request'] = self::with('userhas')
+		$request = self::with('userhas')
 					->where([
 							'to_id' => $opend,
 							'status' => 0,
 						])
-					->field('re_id,c_time,form_id,postscript')
+					->field('re_id,c_time,form_id,postscript,type')
 					->select()->toArray();
+		$find = self::with(['userhas','grouphas'])
+					->where([
+							'group_id' => $opend,
+							'status' => 0,
+						])
+					->field('re_id,c_time,form_id,postscript,type,to_id')
+					->select()->toArray();
+		$data['request'] = array_merge($request,$find);
 		$data['msg'] = self::with('userhas')
 					->where([
 							'form_id' => $opend,
