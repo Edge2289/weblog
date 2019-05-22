@@ -260,11 +260,11 @@ class Service
 						$reUserData['username'] = $toData['user_nick'];
 						$reUserData['sign'] = $toData['is_chat_sign'];
 
-						$this->sendMessage($server, $data['data']['opend'], ['type':1,'emit':'addFriendGroup','data':$reUserData);
+						$this->sendMessage($server, $data['data']['opend'], ['type'=>1,'emit'=>'addFriendGroup','data'=>$reUserData);
 
 					}else if($i['to_status'] == 2){
 						// 拒绝
-						$this->sendMessage($server, $data['data']['opend'], ['type':2,'emit':'addFriendGroup','data':1);
+						$this->sendMessage($server, $data['data']['opend'], ['type'=>2,'emit'=>'addFriendGroup','data'=>1);
 					}
 					
 				}else{
@@ -281,10 +281,10 @@ class Service
 						$gList['id'] = $data['to_id'];
 
 						$this->sendMessage($server, $data['data']['opend'], ['type':1,'emit':'addFriendGroup','data':$gList);
-						
+
 					}else if($i['to_status'] == 2){
 						// 拒绝
-						$this->sendMessage($server, $data['data']['opend'], ['type':2,'emit':'addFriendGroup','data':1);
+						$this->sendMessage($server, $data['data']['opend'], ['type'=>2,'emit'=>'addFriendGroup','data'=>1);
 					}
 				}
 				break;
