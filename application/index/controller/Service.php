@@ -3,6 +3,7 @@
 use think\Db;
 use app\common\model\UserModel;
 use app\common\model\ChatRequest;
+use app\common\model\ChatGroupModel;
 use app\common\model\ChatMyGroupModel;
 use app\common\model\ChatGroupMember;
 /**

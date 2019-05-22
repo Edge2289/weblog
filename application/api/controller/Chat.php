@@ -294,6 +294,7 @@ class Chat
 					$cmfData['gagTime'] = 0;
 					$cmfData['nickName'] = UserModel::where('user_qq',$reData['form_id'])->value('user_nick');
 					// $i = ChatGroupMember::insert($cmfData);
+					$c_s = ChatRequest::where('re_id',$data['requestId'])->update(['to_status'=>1,'status'=>1,'to_read'=>0,'o_time'=>time()]);
 					$i = 1;
 					if ($i) {
 						$rrda['id'] = $reData['form_id'];
