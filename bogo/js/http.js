@@ -6,7 +6,10 @@ $(function(){
 	var domain = GetQueryString("bolg");
 	var arti = GetQueryString("arti");
 	var time = GetQueryString("time");
-
+	if (domain != '' && domain != null) {
+		console.log(domain);
+		$("title").html("小小的成 - "+domain);
+	}
 	var outTime = (new Date()).valueOf();
 	var startTime = localStorage.getItem('user_time');
 
@@ -53,7 +56,6 @@ $(function(){
 		}else{
 			html += '<li><a href="index.html">首页</a></li>';  //  class="fh5co-active"
 		}
-		
 		$.each(data.data,function(key,val){
 			var burl = val['cate_name'];
 			
@@ -129,6 +131,7 @@ function getLocalTime(nS) {
 			var data = JSON.parse(data);
 			console.log(data);
 			// 文章内容显示
+			 $("title").html("小小的成 - "+data.data.html.article_title);
 			 $("#article_title").html(data.data.html.article_title);
 			 $("#article_text").html(data.data.html.article_text);
 			 $("#article_id").val(data.data.html.article_id);
