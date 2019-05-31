@@ -37,6 +37,7 @@ class Article extends Base
 	public function articleadd(){
 		if ($this->request->isPost()) {
 			$data = $this->requset->param();
+			unset($data['data']['editorValue']);
 			return ArticleModel::ins($data['data'], $this->adminId);
 		}
 		$this->assign('catelist', CateModel::where('is_state',1)->field('cate_name,cate_id')->select());
@@ -48,6 +49,7 @@ class Article extends Base
 
 		if ($this->request->isPost()) {
 			$data = $this->requset->param();
+			unset($data['data']['editorValue']);
 			return ArticleModel::upd($data['data']);
 		}
 
