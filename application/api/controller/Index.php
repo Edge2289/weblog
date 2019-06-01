@@ -216,7 +216,7 @@ class Index extends Base
         $map['source_phone'] =  getOS();   // 操作系统 
         $map['source_safari'] =  $info[count($info)-2];  // 浏览器类型 
         $map['source_time'] =  time();   // 时间 
-        // Db('blog_source')->insert($map);
+        Db('blog_source')->insert($map);
     }
 
     /**
@@ -298,14 +298,6 @@ class Index extends Base
               ]
             ]    ;  
     }
-
-
-
-
-
-
-
-
 
     public function _empty(){
     	return ['很棒'];
