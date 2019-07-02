@@ -33,16 +33,27 @@ class Article extends Base
 		return $this->fetch();
 	}
 
-	// 文章的添加
-	public function articleadd(){
-		if ($this->request->isPost()) {
-			$data = $this->requset->param();
-			unset($data['data']['editorValue']);
-			return ArticleModel::ins($data['data'], $this->adminId);
-		}
-		$this->assign('catelist', CateModel::where('is_state',1)->field('cate_name,cate_id')->select());
-		return $this->fetch();
-	}
+    // 文章的添加
+    public function articleadd(){
+        if ($this->request->isPost()) {
+            $data = $this->requset->param();
+            unset($data['data']['editorValue']);
+            return ArticleModel::ins($data['data'], $this->adminId);
+        }
+        $this->assign('catelist', CateModel::where('is_state',1)->field('cate_name,cate_id')->select());
+        return $this->fetch();
+    }
+
+    // 文章的添加
+    public function articleaddnew(){
+        if ($this->request->isPost()) {
+            $data = $this->requset->param();
+            unset($data['data']['editorValue']);
+            return ArticleModel::ins($data['data'], $this->adminId);
+        }
+        $this->assign('catelist', CateModel::where('is_state',1)->field('cate_name,cate_id')->select());
+        return $this->fetch();
+    }
 
 	// 文章的修改
 	public function articleedit(){
