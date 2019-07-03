@@ -2,9 +2,10 @@
 namespace app\api\controller;
 
 use think\Db;
+use think\Request;
+use app\api\common\Base;
 use app\common\model\CateModel;
 use app\common\model\ArticleModel;
-use app\api\common\Base;
 
 /**
 *  前台接口
@@ -14,8 +15,15 @@ class Index extends Base
 	
 	function __construct()
 	{
+	
+		$request = Request::instance();
+		// 判断域名
+		if(!strpos($request->domain(),Config('url'))){
+			$this->redirect("http://www.uikiss.cn");
+		}
+	
 		  // parent::__construct();
-		  header('Content-Type: text/html;charset=utf-8');
+		header('Content-Type: text/html;charset=utf-8');
 	    header('Access-Control-Allow-Origin:*'); // *代表允许任何网址请求
 	    header('Access-Control-Allow-Methods:POST,GET,OPTIONS,DELETE'); // 允许请求的类型
 	    header('Access-Control-Allow-Credentials: true'); // 设置是否允许发送 cookies
@@ -55,6 +63,9 @@ class Index extends Base
      */
 	public function articleHtml(){
 		$article_id = input('get.arti');
+		if(empty($article_id)){
+			return DataReturn(0, '暂无文章', '');die;
+		}
         // 文章信息
 		$data['html'] = ArticleModel::where('article_id',$article_id)
 					->where('article_is_del',2)

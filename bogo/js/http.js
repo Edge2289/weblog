@@ -1,6 +1,6 @@
 
 	// 设置api 地址
-const sUrl = 'http://bogo.uikiss.cn/';
+const sUrl = 'http://bogoapi.uikiss.cn/';
 $(function(){
 
 	var domain = GetQueryString("bolg");

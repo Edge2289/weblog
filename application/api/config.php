@@ -10,5 +10,7 @@
 
 		// 默認json格式返回处理方法
 		'default_jsonp_handler' => 'jsonpReturn',
+		
+		'url' => 'bogoapi.uikiss.cn',
 	];
 ?>

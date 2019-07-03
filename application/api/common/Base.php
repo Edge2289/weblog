@@ -12,6 +12,7 @@ class Base extends Controller
 	protected $request = '';
 		
 	public function __construct(){
+	
 		$adminData = Session('adminData');
 		if (empty($adminData)) {
 			dd(['code'=>0, 'msg' => '暫無參數' , 'data' => []]);
