@@ -59,9 +59,10 @@ class Index extends Base
 		$data['html'] = ArticleModel::where('article_id',$article_id)
 					->where('article_is_del',2)
 					->where('article_is_state',1)
-					->field('article_id,article_title,article_nick,article_text,read_sum,click_sum,is_comment')
+					->field('article_id,article_title,article_nick,article_text,read_sum,click_sum,is_comment,article_markdown')
 					->find()
 					->toArray();
+					
         $data['upper'] = ArticleModel::where('article_id','<',$article_id)
                                         ->where('article_is_del',2)
                                         ->where('article_is_state',1)

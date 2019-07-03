@@ -38,17 +38,8 @@ class Article extends Base
         if ($this->request->isPost()) {
             $data = $this->requset->param();
             unset($data['data']['editorValue']);
-            return ArticleModel::ins($data['data'], $this->adminId);
-        }
-        $this->assign('catelist', CateModel::where('is_state',1)->field('cate_name,cate_id')->select());
-        return $this->fetch();
-    }
-
-    // 文章的添加
-    public function articleaddnew(){
-        if ($this->request->isPost()) {
-            $data = $this->requset->param();
-            unset($data['data']['editorValue']);
+            unset($data['data']['test-editormd-markdown-doc']);
+            unset($data['data']['test-editormd-html-code']);
             return ArticleModel::ins($data['data'], $this->adminId);
         }
         $this->assign('catelist', CateModel::where('is_state',1)->field('cate_name,cate_id')->select());
@@ -61,6 +52,8 @@ class Article extends Base
 		if ($this->request->isPost()) {
 			$data = $this->requset->param();
 			unset($data['data']['editorValue']);
+            unset($data['data']['test-editormd-markdown-doc']);
+            unset($data['data']['test-editormd-html-code']);
 			return ArticleModel::upd($data['data']);
 		}
 

@@ -132,29 +132,11 @@ function getLocalTime(nS) {
 			// 文章内容显示
 			 $("title").html("小小的成 - "+data.data.html.article_title);
 			 $("#article_title").html(data.data.html.article_title);
-			 $("#article_text").html(data.data.html.article_text);
+			 $("#article_markdown").html(data.data.html.article_markdown);
 			 $("#article_id").val(data.data.html.article_id);
 			 if(data.data.html.is_comment == 1){
 				$("#is_comment").show();
 			 }
-			$('img').error(function(){
-						var _this = this;
-						var src = sUrl+$(_this).attr("src");
-						let index = $(_this).attr("src").split('=')[1];
-						setTimeout(function () {
-						       if(index == undefined){
-						            $(_this).attr('src',src + '?timestemp=10');//请求时加上时间戳，防止缓存在
-						       } else if(parseInt(index)>0){
-						            e.url = e.url.split('?')[0]+'?timestemp='+(parseInt(index)-1);//重复请求10次
-						       }else{
-						            e.url = $(_this).attr('src',src + '?timestemp=10')//默认图片
-						       }
-						   }.bind(this), 1000);
-
-			});
-
-
-
 			 var commentHtml = '';
 			 // 评论的展示
 			 data.data.comment.forEach(function(e){
