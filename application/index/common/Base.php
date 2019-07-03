@@ -20,9 +20,10 @@ class Base extends Controller
 	public function __construct()
 	{
 		$request = Request::instance();
+	//	dd($request);
 		// 判断域名
 		if(!strpos($request->domain(),Config('url'))){
-			$this->redirect("http://www.uikiss.cn");
+			// $this->redirect("http://www.uikiss.cn");
 		}
 		
 		parent::__construct();

@@ -19,7 +19,7 @@ class Index extends Base
 		$request = Request::instance();
 		// 判断域名
 		if(!strpos($request->domain(),Config('url'))){
-			$this->redirect("http://www.uikiss.cn");
+			$this->redirect("http://blog.uikiss.cn");
 		}
 	
 		  // parent::__construct();

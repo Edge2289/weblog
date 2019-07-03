@@ -6,10 +6,14 @@ use think\Controller;
 
 class Callback extends Controller
 {
+   public function __construct(){
+	// dd(123);
+}	
+
     //访问QQ登录页面
-    public function qqLogin(){
+    public function qqlogin(){
     	$oauth = new \qq_connect\Oauth();
-    	$oauth->qq_login();
+	$oauth->qq_login();
     }
  
     //qq回调函数
