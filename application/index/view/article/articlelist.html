@@ -87,7 +87,12 @@
                   }}
                   ,{field: 'read_sum', title: '阅读人数', width: 100, sort: true}
                   ,{field: 'click_sum', title: '点赞人数', width: 100, sort: true}
-                  ,{field: 'is_comment', title: '是否评论', width: 135}
+                  ,{field: 'article_is_state', title: '是否显示', width: 135,templet:function(e){
+						return e.article_is_state == 1 ? "显示" : "关闭"
+				  }}
+                  ,{field: 'is_comment', title: '是否评论', width: 135,templet:function(e){
+						return e.is_comment == 1 ? "开启" : "关闭"
+				  }}
                   ,{field: 'article_time', title: '添加时间', width: 135}
                   ,{field: 'wealth', title: '操作', toolbar: '#barDemo', width: 150,fixed: 'right'}
                 ]]
