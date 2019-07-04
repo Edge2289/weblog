@@ -20,7 +20,7 @@ class SourceModel extends Model
 		$where = 'source_time > '.$param["start"].' and source_time < '.$param["end"];
 
 		$data['list'] = self::where($where)->page($param['page'],$param['limit'])->order('source_id desc')->select()->toArray();
-		$data['count'] = self::where($where)->page($param['page'],$param['limit'])->count();
+		$data['count'] = self::where($where)->count();
 		return $data;
 	}
 
@@ -38,8 +38,7 @@ class SourceModel extends Model
 						->select()
 						->toArray();
 		$data['count'] = self::where($where)
-						->group('source_ip')
-						->page($param['page'],$param['limit'])->count();
+						->group('source_ip')->count();
 		return $data;
 
 	}
@@ -60,7 +59,7 @@ class SourceModel extends Model
 		$where = 'source_url like "%details.html?arti%" and';
 		$where .= ' source_time > '.$param["start"].' and source_time < '.$param["end"];
 		$data['list'] = self::where($where)->page($param['page'],$param['limit'])->order('source_id desc')->select()->toArray();
-		$data['count'] = self::where($where)->page($param['page'],$param['limit'])->count();
+		$data['count'] = self::where($where)->count();
 		return $data;
 	}
 }

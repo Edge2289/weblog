@@ -203,7 +203,6 @@ class Index extends Base
      * @return [type] [description]
      */
     public function sourceget(){
-      die;
         $param = Request()->param();
         if (empty($param['localhref'])) {
             return ['参数错误'];
@@ -250,51 +249,6 @@ class Index extends Base
         Db('blog_uv')->insert($map);
     }
 
-
-/**
- * [apilayim 测试]
- * @return [type] [description]
- */
-    public function apilayim(){
-        return [
-              "code" => 0 
-              ,"msg" => "" 
-              ,"data" => [
-              
-                "mine" =>  [
-                  "username" =>  "小小的成"
-                  ,"id" =>  "1010101" 
-                  ,"status" =>  "online" 
-                  ,"sign" =>  "热爱PHP"
-                  ,"avatar" => "http://www.kissapi.com/images/qq.png"
-                ]
-                
-                ,"friend" =>  [[
-                  "groupname" => "同事"
-                  ,"id" =>  1 
-                  ,"list" =>  [[ 
-                    "username" =>  "xx" 
-                    ,"id" =>  "100001" 
-                    ,"avatar" =>  "http://www.kissapi.com/images/qq.png" 
-                    ,"sign" =>  "123" 
-                    ,"status" =>  "online" 
-                  ],[ 
-                    "username" =>  "aa" 
-                    ,"id" =>  "100002" 
-                    ,"avatar" =>  "//tva4.sinaimg.cn/crop.0.1.1125.1125.180/475bb144jw8f9nwebnuhkj20v90vbwh9.jpg" 
-                    ,"sign" =>  "123" 
-                    ,"status" =>  "online" 
-                  ] ]
-                ]]
-                
-                ,"group" =>  [[
-                  "groupname" =>  "q"
-                  ,"id" =>  "101" 
-                  ,"avatar" =>  "a.jpg" 
-                ] ]
-              ]
-            ];
-    }
 
     public function getMembers(){
         return [

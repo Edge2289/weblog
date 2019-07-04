@@ -20,4 +20,7 @@ class Base extends Controller
 		$this->request = Request::instance();
 	}
 
+    public function __empty(){
+        echo "没有该网站";
+    }
 }
