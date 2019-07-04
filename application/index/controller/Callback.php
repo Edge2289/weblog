@@ -7,9 +7,9 @@ use think\Controller;
 class Callback extends Controller
 {
     //访问QQ登录页面
-    public function qqLogin(){
+    public function qqlogin(){
     	$oauth = new \qq_connect\Oauth();
-    	$oauth->qq_login();
+		$oauth->qq_login();
     }
  
     //qq回调函数

@@ -30,7 +30,8 @@ class Service
 		// 实例化redis 单例
 		$this->cli = new Redis();
 		$this->cli->connect(self::redis_host, self::redis_part);
-		$this->cli->select(8);
+		$this->cli->auth("redispass");
+		$this->cli->select(12);
 		// 清楚全部的fd
 		$this->cli->flushdb();
         //监听连接事件
@@ -82,6 +83,7 @@ class Service
 	public function onOpen($server, $request){
 		// 这里做 swoole fd 于用户的opend 连接起来 
 		// 用redis 做保存
+	
 		$requestData = $request->get;
 		if (!isset($requestData['opend'])) {
 			// 参数错误  没有登录
@@ -93,6 +95,7 @@ class Service
 			return ;
 		}
 		$i = UserModel::where('user_qq',$requestData['opend'])->find();
+		print_r($i);
 		if(empty($i)){
 			$data = [
 				"type" => "tokenerror"
