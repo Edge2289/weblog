@@ -1,8 +1,9 @@
 
 	// 设置api 地址
-const sUrl = 'http://bogoapi.uikiss.cn/';
+const sUrl = 'http://blogapi.uikiss.cn/';
 $(function(){
 
+    console.log(window.parent.document.referrer);
 	var domain = GetQueryString("bolg");
 	var arti = GetQueryString("arti");
 	var time = GetQueryString("time");

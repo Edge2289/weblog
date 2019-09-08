@@ -56,7 +56,9 @@ class Chat
 	 */
 	public function userInit(){
 		$param = $this->request->param();
-
+        if (empty($param['opend'])){
+            return $this->reData(0, '请登录',[]);
+        }
 		try {
 			// 查询自己的信息
 			$userData = UserModel::where('user_qq',$param['opend'])->find()->toArray();
@@ -74,21 +76,21 @@ class Chat
 			return $this->reData(0, $e->getMessage(),[]);
 		}
 		return [
-              "code" => 0 
-              ,"msg" => "" 
+              "code" => 0
+              ,"msg" => ""
               ,"data" => [
-              
+
                 "mine" =>  [
                   "username" =>  $userData["user_nick"]
-                  ,"id" =>  $userData["user_qq"] 
-                  ,"status" =>  $userData["is_chat_status"] 
+                  ,"id" =>  $userData["user_qq"]
+                  ,"status" =>  $userData["is_chat_status"]
                   ,"sign" =>  $userData["user_nick"]."说: 热爱PHP！"
                   ,"avatar" => $userData["user_img"]
                   ,"msgbox" => $msgbox
                 ]
-                
+
                 ,"friend" =>  $groupData
-                
+
                 ,"group" =>  $groupmemberData
               ]
             ];
@@ -101,8 +103,8 @@ class Chat
 	      ,"data": {
 	        "src": "http://cdn.xxx.com/upload/images/a.jpg" //图片url
 	      }
-    }      
-          
+    }
+
 	 */
 
 	public function chatImg(){
@@ -125,7 +127,7 @@ class Chat
             			'data'  => [
             				'src'  => $src,
             			],
-            	]; 
+            	];
         }else{
             // 上传失败获取错误信息
             return [
@@ -145,7 +147,7 @@ class Chat
 		    "src": "http://cdn.xxx.com/upload/file/LayIM.zip" //文件url
 		    ,"name": "LayIM.zip" //文件名
 		  }
-		}      
+		}
 	 */
 
 	public function chatFile(){
@@ -167,7 +169,7 @@ class Chat
       ,"sign": "让天下没有难写的代码" //群员签名
     }, …… ]
   }
-}      
+}
 	 */
 
 	public function getMembers(){
@@ -284,7 +286,7 @@ class Chat
 					return $this->reData(0,'该群已满人',[]);
 				}
 				// 添加进群操作
-				
+
 					$cmfData['groupIdx'] = $reData['to_id'];
 					$cmfData['opend'] = $reData['form_id'];
 					$cmfData['status'] = 1;
@@ -430,7 +432,7 @@ class Chat
 		/**
 		 * 1 如果是群的操作
 		 * 2 先判断群是否需要群主审批后加入
-		 * 2.1 不用直接返回  加入群 
+		 * 2.1 不用直接返回  加入群
 		 * 2.2 需要添加数据
 		 */
 		if (empty($data['groupid']) && strlen($data['to_id']) < 33) {
@@ -532,7 +534,7 @@ class Chat
 		return $this->reData(1,'获取成功',$reDa);
 	}
 
-	
+
 	/**
 	 * [reData 返回数据]
 	 * @param  integer $code [状态]

@@ -215,6 +215,7 @@ class Index extends Base
          * @var [type]
          */
         $refere = getSourceCli($param['referer']);
+        dd($param['referer']);
         $map['source_url'] =  $param['localhref'];   //  来源
         $map['source_keywork'] =  $refere['keyWord'];
         $map['source_referer'] =  $refere['fromtype'] == "手动打开" ? "manually" : $refere['fromtype'];
