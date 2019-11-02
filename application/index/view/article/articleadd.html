@@ -36,7 +36,7 @@
                     <span class="x-red">*</span>作者昵称
                 </label>
                 <div class="layui-input-inline">
-                    <input type="text" id="article_nick" name="article_nick" required="" lay-verify="required"
+                    <input type="text" id="article_nick" name="article_nick" required="" value="小小的成" lay-verify="required"
                            autocomplete="off" class="layui-input">
                 </div>
             </div>
@@ -75,7 +75,7 @@
                     文章简介
                 </label>
                 <div class="layui-input-inline">
-                    <input type="text" id="introduction" name="introduction" required="" lay-verify="required"
+                    <input type="text" id="introduction" name="introduction" required="" value="默认简介```" lay-verify="required"
                            autocomplete="off" class="layui-input">
                 </div>
             </div>
@@ -218,10 +218,13 @@
                                         layer.alert(data.msg, {
                                             icon: 6
                                         },function() {
+                                            // 获得frame索引
+                                            var index = parent.layer.getFrameIndex(window.name);
                                             //关闭当前frame
-                                            x_admin_close();
-                                            // 可以对父窗口进行刷新
-                                            x_admin_father_reload();});
+                                            parent.layer.close(index);
+                                            //表格重载 就相当于 刷新父页面的表格-dataTable是父页面的表格ID属性
+                                            parent.layui.table.reload('demo');
+                                        });
                                     }else{
                                         layer.msg(data.msg);
                                     }

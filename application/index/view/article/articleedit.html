@@ -201,10 +201,12 @@
                                 icon: 6
                             },function() {
                               $(".layui-layer-shade4").trigger("click");
+                                // 获得frame索引
+                                var index = parent.layer.getFrameIndex(window.name);
                                 //关闭当前frame
-                                x_admin_close();
-                                // 可以对父窗口进行刷新 
-                                x_admin_father_reload();
+                                parent.layer.close(index);
+                                //表格重载 就相当于 刷新父页面的表格-dataTable是父页面的表格ID属性
+                                parent.layui.table.reload('demo');
                               });
                         }else{
                           layer.msg(data.msg);
