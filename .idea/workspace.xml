@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b29bef91-8b97-4e10-9377-dcfe87b0e197" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/application/index/config.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/index/config.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/index/view/index/main.html" beforeDir="false" afterPath="$PROJECT_DIR$/application/index/view/index/main.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -47,8 +47,13 @@
       <file leaf-file-name="main.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/index/view/index/main.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="111">
-              <caret line="80" column="41" selection-start-line="80" selection-start-column="41" selection-end-line="80" selection-end-column="41" />
+            <state relative-caret-position="534">
+              <caret line="62" column="28" lean-forward="true" selection-start-line="62" selection-start-column="28" selection-end-line="62" selection-end-column="28" />
+              <folding>
+                <element signature="e#3473#3638#0" />
+                <element signature="e#3660#3827#0" />
+                <element signature="e#3849#3935#0" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -192,12 +197,12 @@
       <option name="presentableId" value="Default" />
       <updated>1572668535329</updated>
       <workItem from="1572668536511" duration="227000" />
-      <workItem from="1572674275222" duration="5689000" />
+      <workItem from="1572674275222" duration="5991000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="5916000" />
+    <option name="totallyTimeSpent" value="6218000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="812" extended-state="0" />
@@ -229,6 +234,11 @@
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <option name="time" value="1" />
+    </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/application/index/controller/Article.php">
@@ -396,8 +406,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/index/view/index/main.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="111">
-          <caret line="80" column="41" selection-start-line="80" selection-start-column="41" selection-end-line="80" selection-end-column="41" />
+        <state relative-caret-position="534">
+          <caret line="62" column="28" lean-forward="true" selection-start-line="62" selection-start-column="28" selection-end-line="62" selection-end-column="28" />
+          <folding>
+            <element signature="e#3473#3638#0" />
+            <element signature="e#3660#3827#0" />
+            <element signature="e#3849#3935#0" />
+          </folding>
         </state>
       </provider>
     </entry>
