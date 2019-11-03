@@ -55,6 +55,7 @@
             timeData.push(i+1);
         };
 
+        var userData = "{$userData}";
         // 指定图表的配置项和数据
         var option = {
             grid: {
@@ -77,7 +78,7 @@
             },
             series: [{
                 name:'用户量',
-                data: JSON.parse("{$userData}"),
+                data: JSON.parse(userData),
                 type: 'line',
                 smooth: true
             }]
@@ -90,6 +91,9 @@
         // 基于准备好的dom，初始化echarts实例
         var myChart = echarts.init(document.getElementById('main2'));
 
+        var pvData = "{$pvData}";
+        var uvData = "{$uvData}";
+        console.log(pvData);
         // 指定图表的配置项和数据
         var option = {
             tooltip : {
@@ -125,14 +129,14 @@
                     name:'PV',
                     type:'line',
                     areaStyle: {normal: {}},
-                    data: JSON.parse("{$pvData}"),
+                    data: JSON.parse(pvData),
                     smooth: true
                 },
                 {
                     name:'UV',
                     type:'line',
                     areaStyle: {normal: {}},
-                    data: JSON.parse("{$uvData}"),
+                    data: JSON.parse(uvData),
                     smooth: true,
 
                 }
