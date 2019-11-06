@@ -52,7 +52,7 @@ class Index extends Base
 
 
 	public function articleData(){
-		$type = input('get.type');
+		$type = input('post.type');
 		$data = ArticleModel::articleSel($type);
 		return DataReturn(1, '请求成功', $data);
 	}
@@ -62,7 +62,7 @@ class Index extends Base
      * @return [type] [description]
      */
 	public function articleHtml(){
-		$article_id = input('get.arti');
+		$article_id = input('post.arti');
 		if(empty($article_id)){
 			return DataReturn(0, '暂无文章', '');die;
 		}
@@ -187,7 +187,7 @@ class Index extends Base
      */
     public function userlogin(){
 
-        $map['user_qq'] = input('get.user_qq');
+        $map['user_qq'] = input('post.user_qq');
         $map['ip'] = getIPInfo();
         $reload = getCity($map['ip']);
         $map['region'] = $reload['data']['region'];
@@ -215,7 +215,6 @@ class Index extends Base
          * @var [type]
          */
         $refere = getSourceCli($param['referer']);
-        dd($param['referer']);
         $map['source_url'] =  $param['localhref'];   //  来源
         $map['source_keywork'] =  $refere['keyWord'];
         $map['source_referer'] =  $refere['fromtype'] == "手动打开" ? "manually" : $refere['fromtype'];
