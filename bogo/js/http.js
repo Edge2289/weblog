@@ -1,9 +1,40 @@
 
 	// 设置api 地址
 const sUrl = 'http://blogapi.uikiss.cn/';
+const APP_ID = 'UGX6JHKBhWTPuzZjnzCIB7s8raaY6Kfm';
+const APP_SECRET = 'X2fCKYhc4gNH435yTMgyMQVihaexTgevGCPByeNW6vUkHXstAIKwD9Z4XbYByev9';
+const os = 'bk';
+
+
+
+document.write("<script type='text/javascript' src='js/encryption/utils.js'></script>"); 
+document.write("<script type='text/javascript' src='js/encryption/md5.js'></script>"); 
 $(function(){
 
-    console.log(window.parent.document.referrer);
+
+	function reConfig(data){
+		/**********    加密    ***********/
+
+			//sign 进行md5加密 后端那边需要将小写的字段名转为大写
+			var config = {
+					nonce: getCurrentTime(),
+			        app_id: APP_ID,
+			        format: 'json',
+			        os: os,
+			        sign_method: 'md5',
+			};
+			if(!(data == '' || data == null)){
+				$.each(data, function(k, v){
+					config[k] = v;
+				})
+			}
+			config.sign = sign(config);
+			return config;
+	}
+
+
+
+
 	var domain = GetQueryString("bolg");
 	var arti = GetQueryString("arti");
 	var time = GetQueryString("time");
@@ -37,7 +68,7 @@ $(function(){
 		}
 
 		localStorage.setItem('user_time',(new Date()).valueOf());
-		$.get(sUrl+'api/index/userlogin',{'user_qq':sendData['user_qq']},function(){
+		$.get(sUrl+'api/index/userlogin',reConfig({'user_qq':sendData['user_qq']}),function(){
 			var href = window.location.href;
 			h = href.split('?');
 			// window.location.href = h[0];
@@ -45,7 +76,7 @@ $(function(){
 	}
 
 	// 获取首页分类标签
-	$.get(sUrl+'api/index/cateData',function(data){
+	$.post(sUrl+'api/index/cateData',reConfig(),function(data){
 		var data = JSON.parse(data);
 		var html = '';
 			var href = window.location.href;
@@ -93,7 +124,7 @@ $(function(){
 	// 根据分类获取信息
 	function blog(type){
 		
-		$.get(sUrl+'api/index/articleData',{'type':type},function(data){
+		$.post(sUrl+'api/index/articleData',reConfig({'type':type}),function(data){
 			var data = JSON.parse(data);
 			var html = '';
 			$.each(data.data,function(key, val){
@@ -128,7 +159,7 @@ function getLocalTime(nS) {
 	if(arti){
 		// 	请求属性
 			$.ajaxSettings.async = false;
-		$.get(sUrl+'api/index/articleHtml',{'arti':arti},function(data){
+		$.post(sUrl+'api/index/articleHtml',reConfig({'arti':arti}),function(data){
 			var data = JSON.parse(data);
 			// 文章内容显示
 			 $("title").html("小小的成 - "+data.data.html.article_title);
@@ -209,40 +240,40 @@ function getLocalTime(nS) {
 	var obj = arrObj[arrObj.length-1];
 	if(obj == '' || obj == 'index.html'){
 		    $.ajaxSettings.async = false;
-		$.get(sUrl+'api/index/artindex',function(data){
+		$.post(sUrl+'api/index/artindex',reConfig(),function(data){
 			var data = JSON.parse(data);
 			var hotHtml = '';
 			var newHtml = '';
 			// 热门
 			$.each(data.data.hot,function(key, val){
-			hotHtml += '<div class="col-md-3 col-sm-6 col-padding animate-box fadeInLeft animated" data-animate-effect="fadeInLeft">';
-			hotHtml += '<div class="blog-entry">';
-			hotHtml += '<a href="details.html?arti='+val["article_id"]+'" class="blog-img"><img src="'+sUrl+val["article_img"]+'" class="img-responsive" alt="Free HTML5 Bootstrap Template by FreeHTML5.co"></a>';
-			hotHtml += '	<div class="desc">';
-			hotHtml += '	<h3><a href="details.html?arti='+val["article_id"]+'">'+val["article_title"]+'</a></h3>';
-			hotHtml += '		<span><small>'+val["article_nick"]+'</small> / <small> '+val["cate_data"]["cate_name"]+' </small> / <small> <i class="icon-comment"></i> 2019-4-19</small></span>';
-			var hh = val["introduction"] == '' || val["introduction"] == null ? '暂无简介<br><br>' : val["introduction"];//.substring(1,10);
-			hotHtml += '		<p>'+hh+'</p>';
-			hotHtml += '		<a href="details.html?arti='+val["article_id"]+'" class="lead">阅读文章 <i class="icon-arrow-right3"></i></a>';
-			hotHtml += '	</div>';
-			hotHtml += '</div>';
-			hotHtml += '</div>';	
+				hotHtml += '<div class="col-md-3 col-sm-6 col-padding animate-box fadeInLeft animated" data-animate-effect="fadeInLeft">';
+				hotHtml += '<div class="blog-entry">';
+				hotHtml += '<a href="details.html?arti='+val["article_id"]+'" class="blog-img"><img src="'+sUrl+val["article_img"]+'" class="img-responsive" alt="Free HTML5 Bootstrap Template by FreeHTML5.co"></a>';
+				hotHtml += '	<div class="desc">';
+				hotHtml += '	<h3><a href="details.html?arti='+val["article_id"]+'">'+val["article_title"]+'</a></h3>';
+				hotHtml += '		<span><small>'+val["article_nick"]+'</small> / <small> '+val["cate_data"]["cate_name"]+' </small> / <small> <i class="icon-comment"></i> 2019-4-19</small></span>';
+				var hh = val["introduction"] == '' || val["introduction"] == null ? '暂无简介<br><br>' : val["introduction"];//.substring(1,10);
+				hotHtml += '		<p>'+hh+'</p>';
+				hotHtml += '		<a href="details.html?arti='+val["article_id"]+'" class="lead">阅读文章 <i class="icon-arrow-right3"></i></a>';
+				hotHtml += '	</div>';
+				hotHtml += '</div>';
+				hotHtml += '</div>';	
 			})
 			
 			// 最新
 			$.each(data.data.newd,function(key, val){
-			newHtml += '<div class="col-md-3 col-sm-6 col-padding animate-box fadeInLeft animated" data-animate-effect="fadeInLeft">';
-			newHtml += '<div class="blog-entry">';
-			newHtml += '<a href="details.html?arti='+val["article_id"]+'" class="blog-img"><img src="'+sUrl+val["article_img"]+'" class="img-responsive" alt="Free HTML5 Bootstrap Template by FreeHTML5.co"></a>';
-			newHtml += '	<div class="desc">';
-			newHtml += '	<h3><a href="details.html?arti='+val["article_id"]+'">'+val["article_title"]+'</a></h3>';
-			newHtml += '		<span><small>'+val["article_nick"]+'</small> / <small> '+val["cate_data"]["cate_name"]+' </small> / <small> <i class="icon-comment"></i> 2019-4-19</small></span>';
-			var hh = val["introduction"] == '' || val["introduction"] == null ? '暂无简介<br><br>' : val["introduction"];//.substring(1,10);
-			newHtml += '		<p>'+hh+'</p>';
-			newHtml += '		<a href="details.html?arti='+val["article_id"]+'" class="lead">阅读文章 <i class="icon-arrow-right3"></i></a>';
-			newHtml += '	</div>';
-			newHtml += '</div>';
-			newHtml += '</div>';	
+				newHtml += '<div class="col-md-3 col-sm-6 col-padding animate-box fadeInLeft animated" data-animate-effect="fadeInLeft">';
+				newHtml += '<div class="blog-entry">';
+				newHtml += '<a href="details.html?arti='+val["article_id"]+'" class="blog-img"><img src="'+sUrl+val["article_img"]+'" class="img-responsive" alt="Free HTML5 Bootstrap Template by FreeHTML5.co"></a>';
+				newHtml += '	<div class="desc">';
+				newHtml += '	<h3><a href="details.html?arti='+val["article_id"]+'">'+val["article_title"]+'</a></h3>';
+				newHtml += '		<span><small>'+val["article_nick"]+'</small> / <small> '+val["cate_data"]["cate_name"]+' </small> / <small> <i class="icon-comment"></i> 2019-4-19</small></span>';
+				var hh = val["introduction"] == '' || val["introduction"] == null ? '暂无简介<br><br>' : val["introduction"];//.substring(1,10);
+				newHtml += '		<p>'+hh+'</p>';
+				newHtml += '		<a href="details.html?arti='+val["article_id"]+'" class="lead">阅读文章 <i class="icon-arrow-right3"></i></a>';
+				newHtml += '	</div>';
+				newHtml += '</div>';
+				newHtml += '</div>';	
 			})
 		/**
 		 *  获取banner 图
@@ -346,9 +377,9 @@ function getLocalTime(nS) {
 	var cookieItem = cookie.get('user_cookie');
 	if (!cookieItem) {
 		cookie.set('user_cookie',1131191695+"_"+(new Date()).valueOf());
-		$.get(sUrl+'api/index/uvcollect',{
+		$.post(sUrl+'api/index/uvcollect',reConfig({
 			'cookie' : cookie.get('user_cookie'),
-		},function(){
+		}),function(){
 			'你的快递已经到达';
 		})
 	}
