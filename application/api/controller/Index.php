@@ -12,17 +12,20 @@ use app\common\model\ArticleModel;
 */
 class Index extends Base
 {
-	
-	function __construct()
+
+    protected $request;
+	public function __construct()
 	{
-	
-		$request = Request::instance();
+
+		$this->request = Request::instance();
 		// 判断域名
-		if(!strpos($request->domain(),Config('url'))){
+		if(!strpos($this->request->domain(),Config('url'))){
 			$this->redirect("http://blog.uikiss.cn");
 		}
-	
-		  // parent::__construct();
+
+		// 验证api接口
+        $this->middleware();
+
 		header('Content-Type: text/html;charset=utf-8');
 	    header('Access-Control-Allow-Origin:*'); // *代表允许任何网址请求
 	    header('Access-Control-Allow-Methods:POST,GET,OPTIONS,DELETE'); // 允许请求的类型
@@ -46,12 +49,19 @@ class Index extends Base
 	 */
 	public function cateData(){
 
+	    if(!$this->request->isPost()){
+            return DataReturn(0, '', []);
+        }
 		$data = CateModel::where('is_state', 1)->order('cate_sort desc')->field('cate_id,cate_name')->select();
 		return DataReturn(1, '请求成功', $data);
 	}
 
 
 	public function articleData(){
+
+        if(!$this->request->isPost()){
+            return DataReturn(0, '', []);
+        }
 		$type = input('post.type');
 		$data = ArticleModel::articleSel($type);
 		return DataReturn(1, '请求成功', $data);
@@ -62,6 +72,11 @@ class Index extends Base
      * @return [type] [description]
      */
 	public function articleHtml(){
+
+        if(!$this->request->isPost()){
+            return DataReturn(0, '', []);
+        }
+
 		$article_id = input('post.arti');
 		if(empty($article_id)){
 			return DataReturn(0, '暂无文章', '');die;
@@ -159,6 +174,10 @@ class Index extends Base
      * @return [type] [description]
      */
     public function commentDel(){
+
+        if(!$this->request->isPost()){
+            return DataReturn(0, '', []);
+        }
     	return DataReturn('-1','暂不支持删除评论',[]);
     }
 

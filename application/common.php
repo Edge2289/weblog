@@ -3,6 +3,35 @@
 use think\Db;
 // 应用公共文件
 
+if (! function_exists('array_get')) {
+    /**
+     * Get an item from an array using "dot" notation.
+     *
+     * @param  \ArrayAccess|array  $array
+     * @param  string  $key
+     * @param  mixed   $default
+     * @return mixed
+     */
+    function array_get($array, $key, $default = null)
+    {
+        if (is_null($key)) {
+            return $array;
+        }
+
+        if (isset($array[$key])) {
+            return $array[$key];
+        }
+
+        foreach (explode('.', $key) as $segment) {
+            if (! is_array($array) || ! array_key_exists($segment, $array)) {
+                return $default;
+            }
+
+            $array = $array[$segment];
+        }
+        return $array;
+    }
+}
 /**
  * [DataReturn 返回状态数据]
  * 
@@ -25,7 +54,7 @@ function DataReturn($code = 0 ,$msg = '' ,$data = []){
 	}
 
 	$result = array('code'=>$code,'msg'=>$msg,'data'=>$data);
-	return json_encode($result);
+	return json_encode($result, JSON_UNESCAPED_UNICODE);
 }
 
 	
