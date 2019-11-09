@@ -20,7 +20,7 @@ class Index extends Base
 		$this->request = Request::instance();
 		// 判断域名
 		if(!strpos($this->request->domain(),Config('url'))){
-//			$this->redirect("http://blog.uikiss.cn");
+			$this->redirect("http://blog.uikiss.cn");
 		}
 
 		// 验证api接口
