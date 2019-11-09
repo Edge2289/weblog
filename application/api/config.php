@@ -12,5 +12,13 @@
 		'default_jsonp_handler' => 'jsonpReturn',
 		
 		'url' => 'blogapi.uikiss.cn',
+
+		// 验证的参数
+		'apiMiddleware' => [
+			'app_id' => 'UGX6JHKBhWTPuzZjnzCIB7s8raaY6Kfm', // APPId
+			'app_secret' => 'X2fCKYhc4gNH435yTMgyMQVihaexTgevGCPByeNW6vUkHXstAIKwD9Z4XbYByev9'
+		],
+		// api验证开关
+		'apiMiddlewareStatus' => 1,
 	];
 ?>
